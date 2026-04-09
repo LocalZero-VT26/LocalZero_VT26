@@ -9,5 +9,4 @@ public class LocalZeroApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LocalZeroApplication.class, args);
 	}
-
 }
