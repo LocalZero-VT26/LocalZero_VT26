@@ -1,9 +1,11 @@
+package Model;
+
 public class Initiative {
     private String title;
     private String description;
     private String location;
 
-    
+
     public Initiative(String title, String description, String location) {
         this.title = title;
         this.description = description;
