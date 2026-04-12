@@ -8,6 +8,8 @@ public class CreateInitiativeCommand implements Command {
     private String description;
     private String location;
     private Manager manager = new Manager();
+    private User user;
+
 
 
 
@@ -18,6 +20,7 @@ public class CreateInitiativeCommand implements Command {
         this.title = title;
         this.description = description;
         this.location = location;
+        this.user = user;
     }
 
     public void execute()
@@ -32,9 +35,15 @@ public class CreateInitiativeCommand implements Command {
     {
         System.out.println("Initiative has been sent to the system");
         manager.addInitiative(initiative);
-
     }
 
+    @Override
+    public User getUser() {
+        return user;
+    }
 
-
+    @Override
+    public CommandType getCommandType() {
+        return  CommandType.CREATE_INITIATIVE;
+    }
 }
