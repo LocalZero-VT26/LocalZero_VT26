@@ -1,4 +1,4 @@
-package Commands;
+package Commands.Logic;
 
 import Model.Initiative;
 

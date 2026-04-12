@@ -1,5 +1,6 @@
-package Commands;
+package Commands.Commands;
 
+import Commands.Logic.Manager;
 import Model.User;
 import Model.Initiative;
 

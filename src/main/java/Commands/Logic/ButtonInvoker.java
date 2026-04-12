@@ -1,4 +1,6 @@
-package Commands;
+package Commands.Logic;
+
+import Commands.Commands.Command;
 
 public class ButtonInvoker {
     private Command command;

@@ -1,4 +1,4 @@
-package Commands;
+package Commands.Commands;
 
 import Model.User;
 

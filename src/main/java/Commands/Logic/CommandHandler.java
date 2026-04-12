@@ -1,4 +1,6 @@
-package Commands;
+package Commands.Logic;
+
+import Commands.Commands.Command;
 
 public abstract class CommandHandler {
     protected  CommandHandler next;
