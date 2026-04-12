@@ -1,11 +1,14 @@
+package Model;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
     private String name;
-    private List[] roles;
+    private List<Role> roles;
 
     // Constructor
-    public User(String name, List[] roles) {
+    public User(String name, List<Role> roles) {
         this.name = name;
         this.roles = roles;
     }
@@ -16,7 +19,7 @@ public class User {
     }
 
     // Getter for roles
-    public List[] getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
