@@ -27,12 +27,7 @@ public abstract class CommandHandler {
         }
     }
 
-
-
     protected abstract void process(Command command);
-
-
-
 
     protected abstract boolean canHandle(Command command);
 }

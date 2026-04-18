@@ -12,11 +12,6 @@ public class CreateInitiativeCommand implements Command {
     private User user;
 
 
-
-
-
-
-
     public CreateInitiativeCommand(User user, String title, String description, String location) {
         this.title = title;
         this.description = description;

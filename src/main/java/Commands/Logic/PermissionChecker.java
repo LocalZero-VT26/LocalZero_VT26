@@ -24,10 +24,22 @@ public class PermissionChecker {
 
         if(rolesAllowed == null)
         {
+            System.out.println("Not allowed: no roles configured for this command");
             return false;
         }
 
-        return user.getRoles().stream().anyMatch(rolesAllowed::contains);
+        boolean result = user.getRoles().stream().anyMatch(rolesAllowed::contains);
+
+        if(result)
+        {
+            System.out.println("Allowed");
+        }
+        else
+        {
+            System.out.println("Not allowed");
+        }
+
+        return result;
     }
 
 
