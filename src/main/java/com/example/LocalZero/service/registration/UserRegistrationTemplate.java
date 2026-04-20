@@ -1,4 +1,4 @@
-package com.example.LocalZero.Service.Registration;
+package com.example.LocalZero.service.registration;
 
 import com.example.LocalZero.dto.RegisterRequest;
 import com.example.LocalZero.model.User;
@@ -15,7 +15,6 @@ public abstract class UserRegistrationTemplate implements IRegistrationService {
 
         hashAndSetPassword(user, request.getPassword());
         assignRole(user);
-        //send notification email
         return saveUser(user);
     }
 
@@ -23,6 +22,4 @@ public abstract class UserRegistrationTemplate implements IRegistrationService {
     protected abstract void hashAndSetPassword(User user, String password);
     protected abstract void assignRole(User user);
     protected abstract User saveUser(User user);
-
-    //send notification email
 }

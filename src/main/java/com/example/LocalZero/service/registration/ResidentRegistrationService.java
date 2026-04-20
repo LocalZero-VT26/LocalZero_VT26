@@ -1,18 +1,21 @@
-package com.example.LocalZero.Service.Registration;
+package com.example.LocalZero.service.registration;
 
 import com.example.LocalZero.dto.RegisterRequest;
 import com.example.LocalZero.model.Role;
 import com.example.LocalZero.model.User;
 import com.example.LocalZero.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
-public class ResidentRegistrationService extends UserRegistrationTemplate{
+@Service
+public class ResidentRegistrationService extends UserRegistrationTemplate {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public ResidentRegistrationService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public ResidentRegistrationService(UserRepository userRepository,
+                                       PasswordEncoder passwordEncoder) {
+        this.userRepository  = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
