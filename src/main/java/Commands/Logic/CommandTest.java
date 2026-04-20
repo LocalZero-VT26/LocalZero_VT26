@@ -1,6 +1,7 @@
 package Commands.Logic;
 
 import Commands.Commands.CreateInitiativeCommand;
+import Commands.Commands.RegisterUserCommand;
 import Model.User;
 import Model.Role;
 
@@ -16,8 +17,17 @@ public class CommandTest {
         List<Role> roles = new ArrayList<>();
         roles.add(Role.RESIDENT);
         //roles.add(Role.ORGANIZER);
+        RegisterUserCommand register = new RegisterUserCommand(
+                "Alper",
+                "alper@gmail.com",
+                "Malmö",
+                "lösenord123"
+        );
 
-        User user = new User("Bob", roles);
+        System.out.println("Starting registration");
+        register.execute();
+
+        User user = new User("Bob", "bob@gmail.com", "Malmö", "lösenord123", roles);
 
         CreateInitiativeCommand command = new CreateInitiativeCommand(user, "Hejsan", "jaja", "Malmö");
 

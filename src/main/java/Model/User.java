@@ -5,11 +5,17 @@ import java.util.List;
 
 public class User {
     private String name;
+    private String password;
+    private String email;
+    private String location;
     private List<Role> roles;
 
     // Constructor
-    public User(String name, List<Role> roles) {
+    public User(String name, String email, String location, String password, List<Role> roles) {
         this.name = name;
+        this.password = password;
+        this.email = email;
+        this.location = location;
         this.roles = roles;
     }
 
@@ -26,6 +32,19 @@ public class User {
     public boolean hasRole(Role role) {
         return roles.contains(role);
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
 
 
 }
