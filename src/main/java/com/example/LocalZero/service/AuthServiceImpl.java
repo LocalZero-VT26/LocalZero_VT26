@@ -5,8 +5,11 @@ import com.example.LocalZero.dto.ChangePasswordRequest;
 import com.example.LocalZero.dto.DeleteAccountRequest;
 import com.example.LocalZero.dto.LoginRequest;
 import com.example.LocalZero.dto.RegisterRequest;
+import com.example.LocalZero.model.BlacklistedToken;
 import com.example.LocalZero.model.User;
+import com.example.LocalZero.repository.BlacklistedTokenRepository;
 import com.example.LocalZero.repository.UserRepository;
+import com.example.LocalZero.security.JwtUtil;
 import com.example.LocalZero.service.registration.ResidentRegistrationService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,20 +19,27 @@ public class AuthServiceImpl implements IAuthService {
 
     private final ResidentRegistrationService residentRegistration;
     private final UserRepository userRepository;
+    private final BlacklistedTokenRepository blacklistedTokenRepository;
+    private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
     public AuthServiceImpl(ResidentRegistrationService residentRegistration,
                            UserRepository userRepository,
+                           BlacklistedTokenRepository blacklistedTokenRepository,
+                           JwtUtil jwtUtil,
                            PasswordEncoder passwordEncoder) {
         this.residentRegistration = residentRegistration;
-        this.userRepository       = userRepository;
-        this.passwordEncoder      = passwordEncoder;
+        this.userRepository = userRepository;
+        this.blacklistedTokenRepository = blacklistedTokenRepository;
+        this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public AuthResponse register(RegisterRequest request) {
         User user = residentRegistration.register(request);
-        return new AuthResponse(user.getEmail(), user.getRoles());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRoles());
+        return new AuthResponse(token, user.getEmail(), user.getRoles());
     }
 
     @Override
@@ -41,8 +51,15 @@ public class AuthServiceImpl implements IAuthService {
             throw new IllegalArgumentException("Invalid credentials");
         }
 
-        return new AuthResponse(user.getEmail(), user.getRoles());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRoles());
+        return new AuthResponse(token, user.getEmail(), user.getRoles());
     }
+
+    @Override
+        public void logout(String token) {
+            blacklistedTokenRepository.save(new BlacklistedToken(token));
+        }
+
 
     @Override
     public synchronized void changePassword(String email, ChangePasswordRequest request) {

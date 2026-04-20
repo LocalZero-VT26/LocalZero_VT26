@@ -9,6 +9,7 @@ import com.example.LocalZero.dto.RegisterRequest;
 public interface IAuthService {
     AuthResponse register(RegisterRequest request);
     AuthResponse login(LoginRequest request);
+    void logout(String token);
     void changePassword(String email, ChangePasswordRequest request);
     void deleteAccount(String email, DeleteAccountRequest request);
 }

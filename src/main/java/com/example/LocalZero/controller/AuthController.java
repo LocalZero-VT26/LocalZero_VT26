@@ -31,6 +31,13 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer", "");
+        authService.logout(token);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/change-password")
     public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
