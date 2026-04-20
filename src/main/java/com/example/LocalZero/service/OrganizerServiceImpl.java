@@ -1,7 +1,7 @@
 package com.example.LocalZero.service;
 
 import com.example.LocalZero.dto.AssignRoleRequest;
-import com.example.LocalZero.dto.RegisterRequest;
+import com.example.LocalZero.dto.UpdateProfileRequest;
 import com.example.LocalZero.dto.UserResponse;
 import com.example.LocalZero.model.Role;
 import com.example.LocalZero.model.User;
@@ -16,9 +16,7 @@ public class OrganizerServiceImpl extends AbstractUserService implements IOrgani
     }
 
     @Override
-    public synchronized UserResponse updateProfile(Long id,
-                                                   RegisterRequest request,
-                                                   String callerEmail) {
+    public synchronized UserResponse updateProfile(Long id, UpdateProfileRequest request, String callerEmail) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found: " + id));
 

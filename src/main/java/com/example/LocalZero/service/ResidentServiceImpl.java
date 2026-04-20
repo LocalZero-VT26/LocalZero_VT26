@@ -1,6 +1,6 @@
 package com.example.LocalZero.service;
 
-import com.example.LocalZero.dto.RegisterRequest;
+import com.example.LocalZero.dto.UpdateProfileRequest;
 import com.example.LocalZero.dto.UserResponse;
 import com.example.LocalZero.model.User;
 import com.example.LocalZero.repository.UserRepository;
@@ -14,9 +14,7 @@ public class ResidentServiceImpl extends AbstractUserService implements IResiden
     }
 
     @Override
-    public synchronized UserResponse updateProfile(Long id,
-                                                   RegisterRequest request,
-                                                   String callerEmail) {
+    public synchronized UserResponse updateProfile(Long id, UpdateProfileRequest request, String callerEmail) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found: " + id));
 
