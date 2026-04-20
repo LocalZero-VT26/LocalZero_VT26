@@ -1,4 +1,4 @@
-package Model;
+package com.example.LocalZero.Model;
 
 public abstract class UserRegistrationTemplate {
 

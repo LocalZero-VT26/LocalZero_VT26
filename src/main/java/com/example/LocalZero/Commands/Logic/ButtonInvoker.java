@@ -1,6 +1,6 @@
-package Commands.Logic;
+package com.example.LocalZero.Commands.Logic;
 
-import Commands.Commands.Command;
+import com.example.LocalZero.Commands.Commands.Command;
 
 public class ButtonInvoker {
     private Command command;

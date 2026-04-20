@@ -1,10 +1,10 @@
-package Commands.Logic;
+package com.example.LocalZero.Commands.Logic;
 
-import Commands.Commands.CreateInitiativeCommand;
-import Commands.Commands.RegisterUserCommand;
-import Model.User;
-import Model.Role;
-import Model.UserManager;
+import com.example.LocalZero.Commands.Commands.CreateInitiativeCommand;
+import com.example.LocalZero.Commands.Commands.RegisterUserCommand;
+import com.example.LocalZero.Model.User;
+import com.example.LocalZero.Model.Role;
+import com.example.LocalZero.Model.UserManager;
 
 import java.util.ArrayList;
 import java.util.List;

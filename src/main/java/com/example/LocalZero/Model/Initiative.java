@@ -1,4 +1,4 @@
-package Model;
+package com.example.LocalZero.Model;
 
 public class Initiative {
     private String title;

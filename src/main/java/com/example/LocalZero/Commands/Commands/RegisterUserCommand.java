@@ -1,8 +1,7 @@
-package Commands.Commands;
+package com.example.LocalZero.Commands.Commands;
 
-import Model.User;
-import Model.StandardUserRegistration;
-import org.hibernate.annotations.DialectOverride;
+import com.example.LocalZero.Model.User;
+import com.example.LocalZero.Model.StandardUserRegistration;
 
 public class RegisterUserCommand implements Command{
 
@@ -18,15 +17,17 @@ public class RegisterUserCommand implements Command{
 
     @Override
     public void execute(){
-        registrationLogic.register(name, password, email, location);
+        registrationLogic.register(name, email, location, password);
     }
 
     @Override
-    public User getUser() { return null; }
+    public User getUser() {
+        return null;
+    }
 
     @Override
     public CommandType getCommandType() {
-        return null;
+        return CommandType.REGISTER_USER;
     }
 
 

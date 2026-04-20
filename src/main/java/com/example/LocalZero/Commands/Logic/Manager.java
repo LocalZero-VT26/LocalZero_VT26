@@ -1,6 +1,6 @@
-package Commands.Logic;
+package com.example.LocalZero.Commands.Logic;
 
-import Model.Initiative;
+import com.example.LocalZero.Model.Initiative;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
-package Commands.Commands;
+package com.example.LocalZero.Commands.Commands;
 
-import Commands.Logic.Manager;
-import Model.User;
-import Model.Initiative;
+import com.example.LocalZero.Commands.Logic.Manager;
+import com.example.LocalZero.Model.User;
+import com.example.LocalZero.Model.Initiative;
 
 public class CreateInitiativeCommand implements Command {
     private String title;
