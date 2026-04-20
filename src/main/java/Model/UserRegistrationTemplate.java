@@ -12,6 +12,7 @@ public abstract class UserRegistrationTemplate {
     protected abstract User createUser(String name, String email, String location, String password);
 
     protected void save(User user){
-        System.out.println("User saved" + user.getEmail());
+        UserManager.getInstance().addUser(user);
+        System.out.println("LOG: User " + user.getEmail() + " saved in UserManager.");
     }
 }

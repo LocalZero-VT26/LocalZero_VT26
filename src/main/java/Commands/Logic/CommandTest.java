@@ -4,6 +4,7 @@ import Commands.Commands.CreateInitiativeCommand;
 import Commands.Commands.RegisterUserCommand;
 import Model.User;
 import Model.Role;
+import Model.UserManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,9 @@ public class CommandTest {
 
         System.out.println("Starting registration");
         register.execute();
+
+        int UsersRegistered = UserManager.getInstance().getUsers().size();
+        System.out.println("Number of users registered: " + UsersRegistered);
 
         User user = new User("Bob", "bob@gmail.com", "Malmö", "lösenord123", roles);
 
