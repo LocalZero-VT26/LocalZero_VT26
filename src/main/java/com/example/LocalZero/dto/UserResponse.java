@@ -2,9 +2,11 @@ package com.example.LocalZero.dto;
 
 import com.example.LocalZero.model.Role;
 import com.example.LocalZero.model.User;
+import lombok.Getter;
 
 import java.util.Set;
 
+@Getter
 public class UserResponse {
 
     private long id;
