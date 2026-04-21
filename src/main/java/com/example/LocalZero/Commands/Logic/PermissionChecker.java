@@ -1,9 +1,9 @@
-package Commands.Logic;
+package com.example.LocalZero.Commands.Logic;
 
-import Commands.Commands.Command;
-import Commands.Commands.CommandType;
-import Model.Role;
-import Model.User;
+import com.example.LocalZero.Commands.Commands.Command;
+import com.example.LocalZero.Commands.Commands.CommandType;
+import com.example.LocalZero.Model.Role;
+import com.example.LocalZero.Model.User;
 
 import java.util.HashMap;
 import java.util.Map;
