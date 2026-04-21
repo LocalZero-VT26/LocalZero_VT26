@@ -1,3 +1,3 @@
 package Model;
 
-public enum Role { RESIDENT, ORGANIZER, OWNER }
+public enum Role { RESIDENT, ORGANIZER, ADMIN }

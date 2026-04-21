@@ -14,7 +14,7 @@ public class PermissionChecker {
 
     public PermissionChecker()
     {
-        permissions.put(CommandType.CREATE_INITIATIVE, Set.of(Role.OWNER, Role.ORGANIZER));
+        permissions.put(CommandType.CREATE_INITIATIVE, Set.of(Role.ADMIN, Role.ORGANIZER));
     }
 
 
