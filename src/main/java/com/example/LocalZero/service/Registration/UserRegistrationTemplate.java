@@ -14,12 +14,12 @@ public abstract class UserRegistrationTemplate {
         user.setLocation(request.getLocation());
 
         hashAndSetPassword(user, request.getPassword());
-        assignRoll(user);
+        assignRole(user);
         return saveUser(user);
     }
 
     protected abstract void validateInput(RegisterRequest request);
     protected abstract void hashAndSetPassword(User user, String password);
-    protected abstract void assignRoll(User user);
+    protected abstract void assignRole(User user);
     protected abstract User saveUser(User user);
 }

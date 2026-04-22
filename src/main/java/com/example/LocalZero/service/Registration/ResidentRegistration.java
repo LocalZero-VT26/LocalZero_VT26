@@ -5,7 +5,8 @@ import com.example.LocalZero.Model.User;
 import com.example.LocalZero.dto.RegisterRequest;
 import com.example.LocalZero.exception.ValidationException;
 import com.example.LocalZero.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ResidentRegistration extends UserRegistrationTemplate {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     protected void validateInput(RegisterRequest request) {
@@ -35,7 +33,7 @@ public class ResidentRegistration extends UserRegistrationTemplate {
     }
 
     @Override
-    protected void assignRoll(User user) {
+    protected void assignRole(User user) {
         List<Role> roles = new ArrayList<>();
         roles.add(Role.RESIDENT);
         user.setRoles(roles);
@@ -43,6 +41,10 @@ public class ResidentRegistration extends UserRegistrationTemplate {
 
     @Override
     protected User saveUser(User user) {
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new ValidationException("Email already in use: " + user.getEmail());
+        }
     }
 }

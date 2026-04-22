@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AssignRollRequest {
+public class AssignRoleRequest {
 
     @NotNull
     private Long userId;
