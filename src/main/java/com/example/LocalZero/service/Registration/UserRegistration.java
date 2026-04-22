@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service("residentRegistration")
+@Service("userRegistration")
 @RequiredArgsConstructor
-public class ResidentRegistration extends UserRegistrationTemplate {
+public class UserRegistration extends UserRegistrationTemplate {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

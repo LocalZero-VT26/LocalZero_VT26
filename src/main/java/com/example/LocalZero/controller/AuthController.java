@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth/register")
-public class ResidentAuthController {
+@RequestMapping("/auth")
+public class AuthController {
 
     private final IAuthService authService;
 
-    public ResidentAuthController(@Qualifier("authResidentService") IAuthService authService) {
+    public AuthController(@Qualifier("authService") IAuthService authService) {
         this.authService = authService;
     }
 
-    @PostMapping("/resident")
+    @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }

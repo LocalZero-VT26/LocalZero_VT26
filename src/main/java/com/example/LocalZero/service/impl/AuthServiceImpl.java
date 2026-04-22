@@ -8,12 +8,12 @@ import com.example.LocalZero.service.Registration.UserRegistrationTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-@Service("authResidentService")
-public class AuthResidentImpl implements IAuthService {
+@Service("authService")
+public class AuthServiceImpl implements IAuthService {
 
     private final UserRegistrationTemplate registrationTemplate;
 
-    public AuthResidentImpl(@Qualifier("residentRegistration") UserRegistrationTemplate userRegistrationTemplate) {
+    public AuthServiceImpl(@Qualifier("userRegistration") UserRegistrationTemplate userRegistrationTemplate) {
         this.registrationTemplate = userRegistrationTemplate;
     }
 
