@@ -5,14 +5,15 @@ import com.example.LocalZero.dto.AuthResponse;
 import com.example.LocalZero.dto.RegisterRequest;
 import com.example.LocalZero.service.IAuthService;
 import com.example.LocalZero.service.Registration.UserRegistrationTemplate;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("authResidentService")
 public class AuthResidentImpl implements IAuthService {
 
     private final UserRegistrationTemplate registrationTemplate;
 
-    public AuthResidentImpl(UserRegistrationTemplate userRegistrationTemplate) {
+    public AuthResidentImpl(@Qualifier("residentRegistration") UserRegistrationTemplate userRegistrationTemplate) {
         this.registrationTemplate = userRegistrationTemplate;
     }
 
