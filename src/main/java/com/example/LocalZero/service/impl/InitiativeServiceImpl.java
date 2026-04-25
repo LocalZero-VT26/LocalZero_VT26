@@ -19,11 +19,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-/**
- * The "@RequiredArgsConstructor" below generates a
- * constructor with all fields marked with "final"
- * or "@NonNull".
- */
 public class InitiativeServiceImpl implements IInitiativeService {
 
     private final InitiativeRepository initiativeRepository;

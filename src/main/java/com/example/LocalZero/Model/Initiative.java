@@ -11,10 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-/*
-The "@NoArgsConstructor" above automatically generates a
-default-constructor for us.
- */
 public class Initiative {
 
     public Initiative(String title, String description, String location,

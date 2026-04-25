@@ -13,13 +13,13 @@ public interface IInitiativeService {
     /**
      * When InitiativeRequest has been triggered, InitiativeRespond gets returned.
      * @param request
-     * @return Returns the response.
+     * @return the response.
      */
     InitiativeResponse createInitiative(InitiativeRequest request);
 
     /**
      * A method to help list all the initiatives that are saved.
-     * @return All saved initiatives.
+     * @return all saved initiatives.
      */
     List<InitiativeResponse> getAllInitiatives();
 

@@ -9,9 +9,6 @@ import lombok.AllArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-/**
- * The "@AllArgsConstructor" above creates a constructor including all the variables inside the class.
- */
 public class InitiativeResponse {
 
     private Long id;
