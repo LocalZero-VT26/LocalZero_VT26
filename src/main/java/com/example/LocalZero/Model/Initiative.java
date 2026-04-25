@@ -17,7 +17,8 @@ default-constructor for us.
  */
 public class Initiative {
 
-    public Initiative(String title, String description, String location, String duration, String category){
+    public Initiative(String title, String description, String location,
+                      String duration, String category){
         this.title = title;
         this.description = description;
         this.location = location;
