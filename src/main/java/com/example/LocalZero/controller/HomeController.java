@@ -8,6 +8,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "Välkomna, sidan fungerar som det ska!";
+        return "Welcome, the page is working as expected!";
     }
 }
