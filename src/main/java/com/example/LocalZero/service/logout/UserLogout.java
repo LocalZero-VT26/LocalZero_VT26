@@ -4,7 +4,6 @@ package com.example.LocalZero.service.logout;
 import com.example.LocalZero.Model.BlacklistedToken;
 import com.example.LocalZero.repository.BlacklistedTokenRepository;
 import com.example.LocalZero.service.JwtService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
