@@ -1,7 +1,7 @@
 package com.example.LocalZero.service.login;
 
 import com.example.LocalZero.Model.User;
-import com.example.LocalZero.exception.ValidationException;
+import com.example.LocalZero.exception.InvalidCredentialException;
 import com.example.LocalZero.repository.UserRepository;
 import com.example.LocalZero.service.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +18,13 @@ public class UserLogin extends UserLoginTemplate {
 
     @Override
     protected User findUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new ValidationException("Invalid email or password"));
+        return userRepository.findByEmail(email).orElseThrow(() -> new InvalidCredentialException("Invalid email or password"));
     }
 
     @Override
     protected void verifyPassword(String rawPassword, String hashedPassword) {
         if (!passwordEncoder.matches(rawPassword, hashedPassword)) {
-            throw new ValidationException("Invalid email or password");
+            throw new InvalidCredentialException("Invalid email or password");
         }
     }
 
