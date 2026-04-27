@@ -1,25 +1,27 @@
-package com.example.LocalZero.service.Registration;
+package com.example.LocalZero.service.registration;
 
 import com.example.LocalZero.Model.User;
+import com.example.LocalZero.dto.AuthResponse;
 import com.example.LocalZero.dto.RegisterRequest;
 
 public abstract class UserRegistrationTemplate {
 
-    public final User register(RegisterRequest request){
+    public final AuthResponse register(RegisterRequest request) {
         validateInput(request);
         User user = new User();
-
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setLocation(request.getLocation());
-
         hashAndSetPassword(user, request.getPassword());
         assignRole(user);
-        return saveUser(user);
+        User savedUser = saveUser(user);
+        String token = generateToken(savedUser);
+        return new AuthResponse(savedUser.getId(), savedUser.getName(), savedUser.getEmail(), savedUser.getRoles(), token);
     }
 
     protected abstract void validateInput(RegisterRequest request);
     protected abstract void hashAndSetPassword(User user, String password);
     protected abstract void assignRole(User user);
     protected abstract User saveUser(User user);
+    protected abstract String generateToken(User user);
 }

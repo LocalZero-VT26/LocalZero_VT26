@@ -1,10 +1,11 @@
-package com.example.LocalZero.service.Registration;
+package com.example.LocalZero.service.registration;
 
 import com.example.LocalZero.Model.Role;
 import com.example.LocalZero.Model.User;
 import com.example.LocalZero.dto.RegisterRequest;
 import com.example.LocalZero.exception.ValidationException;
 import com.example.LocalZero.repository.UserRepository;
+import com.example.LocalZero.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,7 @@ public class UserRegistration extends UserRegistrationTemplate {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @Override
     protected void validateInput(RegisterRequest request) {
@@ -46,5 +48,10 @@ public class UserRegistration extends UserRegistrationTemplate {
         } catch (DataIntegrityViolationException e) {
             throw new ValidationException("Email already in use: " + user.getEmail());
         }
+    }
+
+    @Override
+    protected String generateToken(User user) {
+        return jwtService.generateToken(user.getEmail(), user.getRoles());
     }
 }
