@@ -1,6 +1,7 @@
 package com.example.LocalZero.controller;
 
 import com.example.LocalZero.dto.AuthResponse;
+import com.example.LocalZero.dto.DeleteAccountRequest;
 import com.example.LocalZero.dto.LoginRequest;
 import com.example.LocalZero.dto.RegisterRequest;
 import com.example.LocalZero.service.IAuthService;
@@ -33,5 +34,13 @@ public class AuthController {
     @PostMapping("/logout")
     public void logout(@RequestHeader("Authorization") String authHeader) {
         authService.logout(authHeader.substring(7));
+    }
+
+    @DeleteMapping("/account")
+    public ResponseEntity<Void> deleteAccount(@Valid @RequestBody DeleteAccountRequest request,
+                                              @RequestHeader("Authorization") String authHeader) {
+
+        authService.deleteAccount(authHeader.substring(7), request);
+        return ResponseEntity.noContent().build();
     }
 }

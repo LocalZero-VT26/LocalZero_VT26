@@ -3,7 +3,7 @@ package com.example.LocalZero.service.registration;
 import com.example.LocalZero.Model.Role;
 import com.example.LocalZero.Model.User;
 import com.example.LocalZero.dto.RegisterRequest;
-import com.example.LocalZero.exception.ValidationException;
+import com.example.LocalZero.exception.DuplicateResourceException;
 import com.example.LocalZero.repository.UserRepository;
 import com.example.LocalZero.service.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class UserRegistration extends UserRegistrationTemplate {
     @Override
     protected void validateInput(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new ValidationException("Email already in use: " + request.getEmail());
+            throw new DuplicateResourceException("Email already in use: " + request.getEmail());
         }
     }
 
@@ -46,7 +46,7 @@ public class UserRegistration extends UserRegistrationTemplate {
         try {
             return userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
-            throw new ValidationException("Email already in use: " + user.getEmail());
+            throw new DuplicateResourceException("Email already in use: " + user.getEmail());
         }
     }
 
