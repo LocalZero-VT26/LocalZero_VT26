@@ -6,8 +6,11 @@ import com.example.LocalZero.service.IInitiativeService;
 import com.example.LocalZero.dto.*;
 import com.example.LocalZero.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +42,7 @@ public class InitiativeServiceImpl implements IInitiativeService {
         initiative.setCategory(request.getCategory());
         initiative.setDuration(request.getDuration());
         initiative.setVisibility(request.getVisibility());
+        initiative.setCreator(creator);
 
         return mapToInitiativeResponse(initiativeRepository.save(initiative));
     }
@@ -62,6 +66,10 @@ public class InitiativeServiceImpl implements IInitiativeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Initiative not found"));
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found:"));
+
+        if (!user.getRoles().contains(Role.ORGANIZER)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only organizers can post updates");
+        }
 
         Update update = new Update();
         update.setContent(request.getContent());

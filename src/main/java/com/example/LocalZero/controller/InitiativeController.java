@@ -25,24 +25,25 @@ public class InitiativeController {
     }
 
     @PostMapping
-    public ResponseEntity<InitiativeResponse> create(@Valid @RequestBody InitiativeCreateRequest request, Principal principal) {
+    public ResponseEntity<InitiativeResponse> create(@Valid @RequestBody InitiativeCreateRequest request,
+                                                     @RequestAttribute("email") String email) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(initiativeService.createInitiative(request, principal.getName()));
+                .body(initiativeService.createInitiative(request, email));
     }
 
     @PostMapping("/{id}/join")
-    public ResponseEntity<Void> join(@PathVariable Long id, Principal principal) {
-        initiativeService.joinInitiative(id, principal.getName());
+    public ResponseEntity<Void> join(@PathVariable Long id,
+                                     @RequestAttribute("email") String email) {
+        initiativeService.joinInitiative(id, email);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/updates")
-    @PreAuthorize("hasRole('ORGANIZER')")
     public ResponseEntity<UpdateResponse> postUpdate(
             @PathVariable Long id,
             @Valid @RequestBody UpdateCreateRequest request,
-            Principal principal) {
+            @RequestAttribute("email") String email) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(initiativeService.postUpdate(id, request, principal.getName()));
+                .body(initiativeService.postUpdate(id, request, email));
     }
 }

@@ -45,6 +45,10 @@ public class Initiative {
     @Column(nullable = false)
     private String visibility;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id", nullable = false)
+    private User creator;
+
     @ManyToMany
     @JoinTable(
             name = "initiative_participants",
