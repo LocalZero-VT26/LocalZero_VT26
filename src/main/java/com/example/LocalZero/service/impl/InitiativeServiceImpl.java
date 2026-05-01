@@ -14,6 +14,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service implementation that handles the business logic for initiatives.
+ * Transforms requests into database entities, persists them,
+ * and maps results back to response objects. Manages initiative lifecycle
+ * including creation, participation, and updates.
+ */
 @Service
 @RequiredArgsConstructor
 public class InitiativeServiceImpl implements IInitiativeService {
@@ -83,13 +89,15 @@ public class InitiativeServiceImpl implements IInitiativeService {
     }
 
     private InitiativeResponse mapToInitiativeResponse(Initiative initiative) {
-        InitiativeResponse res = new InitiativeResponse();
-        res.setId(initiative.getId());
-        res.setTitle(initiative.getTitle());
-        res.setDescription(initiative.getDescription());
-        res.setCategory(initiative.getCategory());
-        res.setVisibility(initiative.getVisibility());
-        res.setParticipantCount(initiative.getParticipants().size());
-        return res;
+        InitiativeResponse response = new InitiativeResponse();
+        response.setId(initiative.getId());
+        response.setTitle(initiative.getTitle());
+        response.setDescription(initiative.getDescription());
+        response.setLocation(initiative.getLocation());
+        response.setDuration(initiative.getDuration());
+        response.setCategory(initiative.getCategory());
+        response.setVisibility(initiative.getVisibility());
+        response.setParticipantCount(initiative.getParticipants().size());
+        return response;
     }
 }
