@@ -17,6 +17,15 @@ import java.util.Set;
 @NoArgsConstructor
 public class Initiative {
 
+    public Initiative(String title, String description, String location,
+                      String duration, String category){
+        this.title = title;
+        this.description = description;
+        this.location = location;
+        this.duration = duration;
+        this.category = category;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,7 +35,7 @@ public class Initiative {
     private String title;
 
     @NotBlank(message = "Description cannot be blank")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String description;
 
     @NotBlank(message = "Location cannot be blank")
