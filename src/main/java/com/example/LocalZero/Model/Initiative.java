@@ -10,6 +10,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Entity representing an initiative in the system.
+ * Manages initiative data including title, description, participants,
+ * and associated updates. Each initiative has a creator and can be joined by multiple users.
+ */
 @Entity
 @Table(name = "initiatives")
 @Getter
