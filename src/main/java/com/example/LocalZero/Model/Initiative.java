@@ -10,12 +10,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Entity representing an initiative in the system.
+ * Manages initiative data including title, description, participants,
+ * and associated updates. Each initiative has a creator and can be joined by multiple users.
+ */
 @Entity
 @Table(name = "initiatives")
 @Getter
 @Setter
 @NoArgsConstructor
 public class Initiative {
+
+    public Initiative(String title, String description, String location,
+                      String duration, String category, String visibility, User creator) {
+        this.title = title;
+        this.description = description;
+        this.location = location;
+        this.duration = duration;
+        this.category = category;
+        this.visibility = visibility;
+        this.creator = creator;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +42,7 @@ public class Initiative {
     private String title;
 
     @NotBlank(message = "Description cannot be blank")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String description;
 
     @NotBlank(message = "Location cannot be blank")
@@ -60,12 +76,5 @@ public class Initiative {
 
     @OneToMany(mappedBy = "initiative", cascade = CascadeType.ALL)
     private List<Update> updates = new ArrayList<>();
-
-
-    public Initiative(String title, String description, String location) {
-        this.title = title;
-        this.description = description;
-        this.location = location;
-    }
 
 }

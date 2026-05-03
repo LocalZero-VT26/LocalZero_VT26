@@ -6,15 +6,18 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
+/**
+ * REST Controller that handles HTTP requests related to initiatives.
+ * Provides endpoints for creating initiatives, joining them,
+ * retrieving their data, and posting updates.
+ */
 @RestController
 @RequestMapping("/api/initiatives")
-@RequiredArgsConstructor //
+@RequiredArgsConstructor
 public class InitiativeController {
 
     private final IInitiativeService initiativeService;
