@@ -5,6 +5,7 @@ import com.example.LocalZero.repository.*;
 import com.example.LocalZero.service.IInitiativeService;
 import com.example.LocalZero.dto.*;
 import com.example.LocalZero.exception.ResourceNotFoundException;
+import com.example.LocalZero.service.joinInitiative.Join;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class InitiativeServiceImpl implements IInitiativeService {
     private final InitiativeRepository initiativeRepository;
     private final UserRepository userRepository;
     private final UpdateRepository updateRepository;
-    private final com.example.LocalZero.service.joinInitiative.join joinService;
+    private final com.example.LocalZero.service.joinInitiative.Join joinService;
 
     @Override
     public List<InitiativeResponse> getAllInitiatives() {
@@ -58,7 +59,7 @@ public class InitiativeServiceImpl implements IInitiativeService {
     @Transactional
     public InitiativeResponse createInitiative(InitiativeCreateRequest request, String userEmail) {
         User creator = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found:"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
 
         Initiative initiative = new Initiative(
                 request.getTitle(),
@@ -83,9 +84,9 @@ public class InitiativeServiceImpl implements IInitiativeService {
     @Transactional
     public UpdateResponse postUpdate(Long initiativeId, UpdateCreateRequest request, String userEmail) {
         Initiative initiative = initiativeRepository.findById(initiativeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Initiative not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Initiative not found with id: " + initiativeId));
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found:"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
 
         if (!user.getRoles().contains(Role.ORGANIZER)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only organizers can post updates");

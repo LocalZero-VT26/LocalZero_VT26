@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class join {
+public class Join {
 
 	private final InitiativeRepository initiativeRepository;
 	private final UserRepository userRepository;
@@ -24,9 +24,9 @@ public class join {
 	@Transactional
 	public void joinInitiative(Long initiativeId, String userEmail) {
 		Initiative initiative = initiativeRepository.findById(initiativeId)
-				.orElseThrow(() -> new ResourceNotFoundException("Initiative not found:"));
+				.orElseThrow(() -> new ResourceNotFoundException("Initiative not found with id: " + initiativeId));
 		User user = userRepository.findByEmail(userEmail)
-				.orElseThrow(() -> new ResourceNotFoundException("User not found:"));
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
 
 		initiative.getParticipants().add(user);
 		initiativeRepository.save(initiative);
