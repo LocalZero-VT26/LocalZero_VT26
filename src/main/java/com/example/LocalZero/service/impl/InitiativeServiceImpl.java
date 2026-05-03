@@ -29,6 +29,7 @@ public class InitiativeServiceImpl implements IInitiativeService {
     private final InitiativeRepository initiativeRepository;
     private final UserRepository userRepository;
     private final UpdateRepository updateRepository;
+    private final com.example.LocalZero.service.joinInitiative.join joinService;
 
     @Override
     public List<InitiativeResponse> getAllInitiatives() {
@@ -75,13 +76,7 @@ public class InitiativeServiceImpl implements IInitiativeService {
     @Override
     @Transactional
     public void joinInitiative(Long initiativeId, String userEmail) {
-        Initiative initiative = initiativeRepository.findById(initiativeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Initiative not found:"));
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found:"));
-
-        initiative.getParticipants().add(user);
-        initiativeRepository.save(initiative);
+        joinService.joinInitiative(initiativeId, userEmail);
     }
 
     @Override
