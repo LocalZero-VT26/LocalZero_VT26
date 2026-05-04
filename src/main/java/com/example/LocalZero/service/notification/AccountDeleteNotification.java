@@ -1,17 +1,17 @@
 package com.example.LocalZero.service.notification;
 
 import com.example.LocalZero.dto.NotificationData;
-import com.example.LocalZero.service.IAccountDeletedNotification;
-import com.example.LocalZero.service.IEmailService;
+import com.example.LocalZero.service.INotification;
+import com.example.LocalZero.service.INotificationSender;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AccountDeleteNotification implements IAccountDeletedNotification {
+public class AccountDeleteNotification implements INotification {
 
-    private final IEmailService emailService;
+    private final INotificationSender sender;
 
-    public AccountDeleteNotification(IEmailService emailService) {
-        this.emailService = emailService;
+    public AccountDeleteNotification(INotificationSender sender) {
+        this.sender = sender;
     }
 
     @Override
@@ -22,8 +22,7 @@ public class AccountDeleteNotification implements IAccountDeletedNotification {
                 "",
                 "Account Deleted",
                 "Your LocalZero account has been deleted."
-
         );
-        emailService.send(data);
+        sender.send(data);
     }
 }
