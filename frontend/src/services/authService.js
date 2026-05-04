@@ -26,13 +26,16 @@ const authService = {
             const user = JSON.parse(localStorage.getItem('user'));
             const token = user?.token;
 
-            if (token) {
-                await api.post('/auth/logout');
+            if (!token) {
+                localStorage.removeItem('user');
+                return;
             }
+
+            await api.post('/auth/logout');
+            localStorage.removeItem('user');
         } catch (error) {
             console.error('Logout error:', error);
-        } finally {
-            localStorage.removeItem('user');
+            throw error;
         }
     },
 
