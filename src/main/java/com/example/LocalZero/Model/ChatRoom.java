@@ -19,6 +19,7 @@ public class ChatRoom {
 
     public ChatRoom(String user1Email, String user2Email) {
         this.user1Email = user1Email;
+        this.user2Email = user2Email;
     }
 
     @Id

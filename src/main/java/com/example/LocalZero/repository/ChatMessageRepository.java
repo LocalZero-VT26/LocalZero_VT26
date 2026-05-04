@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 
-    List<ChatMessage> findByRoomIdOrderByCreatedAtAsc(Long roomId);
+    List<ChatMessage> findByRoomIdOrderByCreatedAtAsc(Long chatRoomId);
 
-    boolean existsByRoomIdAndReadFalseAndSenderEmailNot(Long roomId, String senderEmail);
+    boolean existsByRoomIdAndReadFalseAndSenderEmailNot(Long chatRoomId, String senderEmail);
 }
