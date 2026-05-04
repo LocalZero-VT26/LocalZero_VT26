@@ -20,9 +20,20 @@ const authService = {
         return response.data;
     },
 
-    // Logga ut genom att rensa localStorage
-    logout: () => {
-        localStorage.removeItem('user');
+    // Logga ut genom att blacklista token på servern och rensa localStorage
+    logout: async () => {
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = user?.token;
+
+            if (token) {
+                await api.post('/auth/logout');
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            localStorage.removeItem('user');
+        }
     },
 
     // Hämta aktuell inloggad användare

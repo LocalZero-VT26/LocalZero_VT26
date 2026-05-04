@@ -3,22 +3,24 @@ import api from './api'
 const InitiativeService = {
 
     getAll: async () => {
-        const response = await api.get('/initiatives')
+        const response = await api.get('/api/initiatives')
         return response.data
     },
 
     create: async (initiativeData) => {
-        const response = await api.post('/initiatives', initiativeData)
+        const response = await api.post('/api/initiatives', initiativeData)
         return response.data
     },
 
-    join: async (Id) => {
-        const response = await api.post('/initiatives/join', {Id})
+    join: async (id) => {
+        const response = await api.post(`/api/initiatives/${id}/join`)
         return response.data
     },
 
-    postUpdate: async (Id, initiativeData) => {
-        const response = await api.put(`/initiatives/${Id}`, initiativeData)
+    postUpdate: async (id, updateData) => {
+        const response = await api.post(`/api/initiatives/${id}/updates`, updateData)
         return response.data
     }
 };
+
+export default InitiativeService;
