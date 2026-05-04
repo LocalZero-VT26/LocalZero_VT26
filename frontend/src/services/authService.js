@@ -41,7 +41,18 @@ const authService = {
 
     // Hämta aktuell inloggad användare
     getCurrentUser: () => {
-        return JSON.parse(localStorage.getItem('user'));
+        const storedUser = localStorage.getItem('user');
+
+        if (!storedUser) {
+            return null;
+        }
+
+        try {
+            return JSON.parse(storedUser);
+        } catch (error) {
+            localStorage.removeItem('user');
+            return null;
+        }
     }
 };
 
