@@ -5,7 +5,7 @@ import com.example.LocalZero.service.INotification;
 import com.example.LocalZero.service.INotificationSender;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("chatMessageNotification")
 public class ChatMessageNotification implements INotification {
 
     private INotificationSender sender;
