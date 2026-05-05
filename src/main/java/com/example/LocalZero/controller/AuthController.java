@@ -5,6 +5,7 @@ import com.example.LocalZero.dto.DeleteAccountRequest;
 import com.example.LocalZero.dto.LoginRequest;
 import com.example.LocalZero.dto.RegisterRequest;
 import com.example.LocalZero.service.IAuthService;
+import com.example.LocalZero.service.OnlineUserRegistery;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -16,23 +17,32 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final IAuthService authService;
+    private final OnlineUserRegistery onlineUserRegistery;
 
-    public AuthController(@Qualifier("authService") IAuthService authService) {
+    public AuthController(@Qualifier("authService") IAuthService authService,
+                          OnlineUserRegistery onlineUserRegistery) {
         this.authService = authService;
+        this.onlineUserRegistery = onlineUserRegistery;
     }
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
+        AuthResponse response = authService.register(request);
+        onlineUserRegistery.setOnline(response.getEmail());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+        AuthResponse response = authService.login(request);
+        onlineUserRegistery.setOnline(response.getEmail());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/logout")
-    public void logout(@RequestHeader("Authorization") String authHeader) {
+    public void logout(@RequestHeader("Authorization") String authHeader,
+                       @RequestAttribute("email") String email) {
+        onlineUserRegistery.setOffline(email);
         authService.logout(authHeader.substring(7));
     }
 
