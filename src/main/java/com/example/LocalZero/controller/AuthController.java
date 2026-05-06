@@ -40,16 +40,18 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public void logout(@RequestHeader("Authorization") String authHeader,
-                       @RequestAttribute("email") String email) {
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authHeader,
+                                       @RequestAttribute("email") String email) {
         onlineUserRegistery.setOffline(email);
         authService.logout(authHeader.substring(7));
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/account")
     public ResponseEntity<Void> deleteAccount(@Valid @RequestBody DeleteAccountRequest request,
-                                              @RequestHeader("Authorization") String authHeader) {
-
+                                              @RequestHeader("Authorization") String authHeader,
+                                              @RequestAttribute("email") String email) {
+        onlineUserRegistery.setOffline(email);
         authService.deleteAccount(authHeader.substring(7), request);
         return ResponseEntity.noContent().build();
     }
