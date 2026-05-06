@@ -20,10 +20,9 @@ public class MessagingController {
     private final IChatService chatService;
 
     @PostMapping("/send")
-    public ResponseEntity<Void> sendMessage(@Valid @RequestBody SendMessageRequest request,
-                                            @RequestAttribute("email") String email) {
-        chatService.sendMessage(email, request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ChatMessageResponse> sendMessage(@Valid @RequestBody SendMessageRequest request,
+                                                           @RequestAttribute("email") String email) {
+        return ResponseEntity.status(201).body(chatService.sendMessage(email, request));
     }
 
     @GetMapping("/rooms")

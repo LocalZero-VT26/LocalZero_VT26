@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IChatService {
 
-    void sendMessage(String senderEmail, SendMessageRequest request);
+    ChatMessageResponse sendMessage(String senderEmail, SendMessageRequest request);
 
     List<ChatRoomSummaryResponse> getRoomsForUser(String userEmail);
 

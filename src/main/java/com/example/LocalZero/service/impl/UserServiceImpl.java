@@ -6,6 +6,7 @@ import com.example.LocalZero.dto.UserSummaryResponse;
 import com.example.LocalZero.exception.ResourceNotFoundException;
 import com.example.LocalZero.repository.UserRepository;
 import com.example.LocalZero.service.IUserService;
+import com.example.LocalZero.service.OnlineUserRegistery;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,10 +16,11 @@ import java.util.List;
 public class UserServiceImpl implements IUserService {
 
     private final UserRepository userRepository;
+    private final OnlineUserRegistery onlineUserRegistery;
 
-
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, OnlineUserRegistery onlineUserRegistery) {
         this.userRepository = userRepository;
+        this.onlineUserRegistery = onlineUserRegistery;
     }
 
     @Override
@@ -54,7 +56,8 @@ public class UserServiceImpl implements IUserService {
                         user.getName(),
                         user.getLocation(),
                         user.getRoles(),
-                        user.getEmail()
+                        user.getEmail(),
+                        onlineUserRegistery.isOnline(user.getEmail())
                 ));
             }
         }

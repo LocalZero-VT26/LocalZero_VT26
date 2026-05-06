@@ -13,11 +13,13 @@ public class ChatRoomSummaryResponse {
     private String otherUserEmail;
     private String otherUserName;
     private boolean hasUnseenMessages;
+    private boolean otherUserOnline;
 
-    public ChatRoomSummaryResponse(Long roomId, String otherUserEmail, String otherUserName, boolean hasUnseenMessages) {
+    public ChatRoomSummaryResponse(Long roomId, String otherUserEmail, String otherUserName, boolean hasUnseenMessages, boolean otherUserOnline) {
         this.roomId = roomId;
         this.otherUserEmail = otherUserEmail;
         this.otherUserName = otherUserName;
         this.hasUnseenMessages = hasUnseenMessages;
+        this.otherUserOnline = otherUserOnline;
     }
 }

@@ -18,12 +18,14 @@ public class UserSummaryResponse {
     private String location;
     private List<Role> roles;
     private String email;
+    private boolean online;
 
-    public UserSummaryResponse(Long id, String name, String location, List<Role> roles, String email) {
+    public UserSummaryResponse(Long id, String name, String location, List<Role> roles, String email, boolean online) {
         this.id = id;
         this.name = name;
         this.location = location;
         this.roles = roles;
         this.email = email;
+        this.online = online;
     }
 }

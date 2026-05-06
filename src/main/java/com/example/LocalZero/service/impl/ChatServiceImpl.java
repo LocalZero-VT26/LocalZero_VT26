@@ -21,7 +21,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ChatServiceImpl implements IChatService {
@@ -46,12 +45,11 @@ public class ChatServiceImpl implements IChatService {
 
     @Override
     @Transactional
-    public void sendMessage(String senderEmail, SendMessageRequest request) {
+    public ChatMessageResponse sendMessage(String senderEmail, SendMessageRequest request) {
         String recipientEmail = request.getRecipientEmail();
 
         User recipient = userRepository.findByEmail(recipientEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Recipient not found"));
-
 
         String email1;
         String email2;
@@ -67,16 +65,16 @@ public class ChatServiceImpl implements IChatService {
         ChatRoom chatRoom = chatRoomRepository.findByUser1EmailAndUser2Email(email1, email2)
                 .orElseGet(() -> chatRoomRepository.save(new ChatRoom(email1, email2)));
 
-
-        chatMessageRepository.save(new ChatMessage(chatRoom, senderEmail, request.getContent()));
+        ChatMessage saved = chatMessageRepository.save(new ChatMessage(chatRoom, senderEmail, request.getContent()));
 
         if (!onlineUserRegistery.isOnline(recipientEmail)) {
             User sender = userRepository.findByEmail(senderEmail).orElse(null);
-
             if (sender != null) {
                 chatMessageNotification.notify(recipient.getEmail(), sender.getName());
             }
         }
+
+        return new ChatMessageResponse(saved.getId(), saved.getSenderEmail(), saved.getContent(), saved.getCreatedAt(), saved.isRead());
     }
 
     @Override
@@ -98,13 +96,14 @@ public class ChatServiceImpl implements IChatService {
                     .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
             boolean hasUnseen = chatMessageRepository.existsByChatRoomIdAndReadFalseAndSenderEmailNot(chatRoom.getId(), userEmail);
-
+            boolean otherUserOnline = onlineUserRegistery.isOnline(otherEmail);
 
             responseList.add(new ChatRoomSummaryResponse(
                     chatRoom.getId(),
                     otherUser.getEmail(),
                     otherUser.getName(),
-                    hasUnseen
+                    hasUnseen,
+                    otherUserOnline
             ));
         }
 
@@ -112,6 +111,7 @@ public class ChatServiceImpl implements IChatService {
     }
 
     @Override
+    @Transactional
     public List<ChatMessageResponse> getRoomMessage(String userEmail, Long roomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
@@ -127,6 +127,9 @@ public class ChatServiceImpl implements IChatService {
         List<ChatMessageResponse> messageResponses = new ArrayList<>();
 
         for (ChatMessage chatMessage : messages) {
+            if (!chatMessage.getSenderEmail().equals(userEmail) && !chatMessage.isRead()) {
+                chatMessage.setRead(true);
+            }
             messageResponses.add(new ChatMessageResponse(
                     chatMessage.getId(),
                     chatMessage.getSenderEmail(),
@@ -137,6 +140,5 @@ public class ChatServiceImpl implements IChatService {
         }
 
         return messageResponses;
-
     }
 }
