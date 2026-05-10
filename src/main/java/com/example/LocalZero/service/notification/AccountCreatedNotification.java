@@ -1,17 +1,17 @@
 package com.example.LocalZero.service.notification;
 
 import com.example.LocalZero.dto.NotificationData;
-import com.example.LocalZero.service.IAccountCreatedNotification;
-import com.example.LocalZero.service.IEmailService;
+import com.example.LocalZero.service.INotification;
+import com.example.LocalZero.service.INotificationSender;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AccountCreatedNotification implements IAccountCreatedNotification {
+public class AccountCreatedNotification implements INotification {
 
-    private final IEmailService emailService;
+    private final INotificationSender sender;
 
-    public AccountCreatedNotification(IEmailService emailService) {
-        this.emailService = emailService;
+    public AccountCreatedNotification(INotificationSender sender) {
+        this.sender = sender;
     }
 
     @Override
@@ -23,6 +23,6 @@ public class AccountCreatedNotification implements IAccountCreatedNotification {
                 "Welcome to LocalZero!",
                 "Your Account has been created successfully."
         );
-        emailService.send(data);
+        sender.send(data);
     }
 }

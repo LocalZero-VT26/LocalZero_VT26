@@ -5,12 +5,12 @@ import com.example.LocalZero.service.INotification;
 import com.example.LocalZero.service.INotificationSender;
 import org.springframework.stereotype.Service;
 
-@Service
-public class AccountDeleteNotification implements INotification {
+@Service("chatMessageNotification")
+public class ChatMessageNotification implements INotification {
 
-    private final INotificationSender sender;
+    private INotificationSender sender;
 
-    public AccountDeleteNotification(INotificationSender sender) {
+    public ChatMessageNotification(INotificationSender sender) {
         this.sender = sender;
     }
 
@@ -20,9 +20,10 @@ public class AccountDeleteNotification implements INotification {
                 to,
                 name,
                 "",
-                "Account Deleted",
-                "Your LocalZero account has been deleted."
+                "New message from " + name,
+                "You have received a new message"
         );
+
         sender.send(data);
     }
 }
