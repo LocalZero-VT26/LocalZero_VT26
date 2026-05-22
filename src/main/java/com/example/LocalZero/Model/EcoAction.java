@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class EcoAction {
 
     @Id
-    @GeneratedValue(strategy = GeneratedValue.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String description;
