@@ -11,6 +11,7 @@ import com.example.LocalZero.service.sustainability.LogEcoActionCommand;
 import com.example.LocalZero.service.sustainability.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,9 +22,10 @@ public class SustainabilityServiceImpl implements ISustainabilityService {
 
 
     @Override
+    @Transactional
     public void logEcoAction(String description, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
+                .orElse(null);
 
         UserValidator userValidator = new UserValidator();
         ContentValidator contentValidator = new ContentValidator();

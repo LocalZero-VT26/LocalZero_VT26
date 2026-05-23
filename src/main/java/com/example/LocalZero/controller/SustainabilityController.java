@@ -7,10 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/sustainability")
@@ -20,10 +19,12 @@ public class SustainabilityController {
     private final ISustainabilityService sustainabilityService;
 
     @PostMapping("/log")
-    public ResponseEntity<String> logEcoAction(@RequestBody EcoActionRequest request, Principal principal) {
-        String userEmail = principal.getName();
+    public ResponseEntity<String> logEcoAction(
+            @RequestBody EcoActionRequest request,
+            @RequestAttribute("email") String userEmail
+    ) {
         sustainabilityService.logEcoAction(request.getDescription(), userEmail);
 
-        return ResponseEntity.ok("Eco-action logged sucessfully!");
+        return ResponseEntity.ok("Eco-action logged successfully!");
     }
 }

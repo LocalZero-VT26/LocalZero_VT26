@@ -11,7 +11,7 @@ public class ContentValidator extends EcoValidator{
             throw new ValidationException("Description cannot be empty");
         }
 
-        if (user != null) {
+        if (next != null) {
             next.validate(description, user);
         }
     }
