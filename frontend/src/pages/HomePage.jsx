@@ -1,5 +1,6 @@
 import authService from '../services/authService'
 import { useNavigate } from 'react-router-dom'
+import EcoActionLogger from "../components/EcoActionLogger.jsx";
 
 function HomePage() {
     const user = authService.getCurrentUser();
@@ -16,6 +17,13 @@ function HomePage() {
                 <span>Welcome, <strong>{user?.name}</strong></span>
                 <button onClick={handleLogout} style={{cursor: 'pointer', padding: '6px 16px' }}>Logout</button>
             </nav>
+
+            <div style={{padding: '24px'}}>
+                <h2>Home</h2>
+                <p>You can see your initiatives and logg Eco-actions here.</p>
+
+                <EcoActionLogger />
+            </div>
         </div>
     )
 }
