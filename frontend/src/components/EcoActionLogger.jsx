@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import sustainabilityService from "../services/sustainabilityService.js";
 
 
@@ -25,7 +26,7 @@ function EcoActionLogger() {
             <h3>Logga en Eco-Action</h3>
 
             <form onSubmit={handleSubmit}>
-                <input type="text" placeholder="T.ex. Cyklade till jobbet." value={description}/>
+                <input type="text" placeholder="T.ex. Cyklade till jobbet." value={description} onChange={(e) => setDescription(e.target.value)}/>
                 <button type='submit' style={{padding: '8px 16px', cursor: 'pointer'}}>Logga handling</button>
             </form>
 
