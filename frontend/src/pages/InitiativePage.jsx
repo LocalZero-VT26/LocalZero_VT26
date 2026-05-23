@@ -1,7 +1,8 @@
-// src/pages/InitiativePage.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import authService from '../services/authService';
+
+import InitiativeService from '../services/InitiativeService';
 
 function InitiativePage() {
     const navigate = useNavigate();
@@ -28,21 +29,13 @@ function InitiativePage() {
         const fetchInitiatives = async () => {
             try {
                 setError('');
-                const response = await fetch('/api/initiatives', {
-                    headers: { 'Content-Type': 'application/json' }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to retrieve community initiatives.');
-                }
-
-                const data = await response.json();
+                const data = await InitiativeService.getAll();
                 if (isMounted) {
                     setInitiatives(data);
                 }
             } catch (err) {
                 if (isMounted) {
-                    setError(err.message || 'Something went wrong while loading data.');
+                    setError(err.response?.data?.message || 'Something went wrong while loading data.');
                 }
             } finally {
                 if (isMounted) {
@@ -61,21 +54,7 @@ function InitiativePage() {
     const handleJoinInitiative = async (id) => {
         setJoiningId(id);
         try {
-            // Hämta token från authService
-            const token = authService.getToken?.() || localStorage.getItem('token');
-
-            const response = await fetch(`/api/initiatives/${id}/join`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // Lägg till token i headern
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Could not join this initiative. Please try again.');
-            }
+            await InitiativeService.join(id);
 
             setInitiatives(prevInitiatives =>
                 prevInitiatives.map(item => {
@@ -88,7 +67,7 @@ function InitiativePage() {
 
             alert('You have successfully joined this initiative!');
         } catch (err) {
-            alert(err.message);
+            alert(err.response?.data?.message || 'Could not join this initiative. Please try again.');
         } finally {
             setJoiningId(null);
         }
@@ -104,25 +83,8 @@ function InitiativePage() {
         setError('');
 
         try {
-            // Hämta token från authService
-            const token = authService.getToken?.() || localStorage.getItem('token');
 
-            const response = await fetch('/api/initiatives', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // Lägg till token i headern
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to establish your initiative.');
-            }
-
-            const freshInitiative = await response.json();
+            const freshInitiative = await InitiativeService.create(formData);
 
             setInitiatives(prev => [freshInitiative, ...prev]);
             setShowCreateModal(false);
@@ -136,12 +98,12 @@ function InitiativePage() {
                 visibility: 'Public'
             });
         } catch (err) {
-            setError(err.message);
+            setError(err.response?.data?.message || 'Failed to establish your initiative.');
         }
     };
+
     return (
         <div style={{ fontFamily: 'system-ui, sans-serif', minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-            {/* Toppnavigering */}
             <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 28px', borderBottom: '1px solid #e5e7eb', backgroundColor: '#ffffff' }}>
                 <button
                     onClick={() => navigate('/home')}
@@ -152,7 +114,6 @@ function InitiativePage() {
                 <span style={{ color: '#374151', fontSize: '14px' }}>Acting as: <strong>{user?.name || 'Local Member'}</strong></span>
             </nav>
 
-            {/* Huvudinnehåll */}
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
                     <div>
@@ -181,7 +142,7 @@ function InitiativePage() {
                         <p style={{ color: '#6b7280', margin: 0 }}>Be the first to step forward and launch a campaign in your zone!</p>
                     </div>
                 ) : (
-                    /* Rutnät med initiativ-kort */
+
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
                         {initiatives.map((initiative) => (
                             <div key={initiative.id} style={{ backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -215,10 +176,9 @@ function InitiativePage() {
                 )}
             </div>
 
-            {/* Modal-formulär (visas när showCreateModal är sant) */}
             {showCreateModal && (
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '20px' }}>
-                    <div style={{ backgroundColor: '#ffffff', borderRadius: '8px', padding: '32px', maxWidth: '550px', width: '100%', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+                    <div style={{ backgroundColor: '#ffffff', borderRadius: '#8px', padding: '32px', maxWidth: '550px', width: '100%', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
                         <h2 style={{ margin: '0 0 6px 0', color: '#111827', fontSize: '22px', fontWeight: '700' }}>Establish New Initiative</h2>
                         <p style={{ color: '#6b7280', fontSize: '14px', margin: '0 0 24px 0' }}>Deploy a crowdsourced campaign within the active community node.</p>
 

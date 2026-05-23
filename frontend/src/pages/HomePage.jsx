@@ -6,8 +6,13 @@ function HomePage() {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        await authService.logout();
-        navigate('/');
+        try {
+            await authService.logout();
+        } catch (err) {
+            console.warn("Backend logout failed, navigating to login anyway", err);
+        } finally {
+            navigate('/');
+        }
     }
 
     return (

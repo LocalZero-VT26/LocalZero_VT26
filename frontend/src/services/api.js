@@ -7,6 +7,7 @@ const api = axios.create({
     },
 });
 
+
 api.interceptors.request.use((config) => {
     const storedUser = localStorage.getItem('user');
     let user = null;
@@ -14,7 +15,7 @@ api.interceptors.request.use((config) => {
     if (storedUser) {
         try {
             user = JSON.parse(storedUser);
-        } catch (error) {
+        } catch {
             user = null;
         }
     }
