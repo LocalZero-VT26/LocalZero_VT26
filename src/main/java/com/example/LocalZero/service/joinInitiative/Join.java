@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+
 /**
  * Service bean that performs the action of joining a user to an initiative.
  * Implemented separately so the operation can be reused from higher-level
@@ -27,6 +30,11 @@ public class Join {
 				.orElseThrow(() -> new ResourceNotFoundException("Initiative not found with id: " + initiativeId));
 		User user = userRepository.findByEmail(userEmail)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
+
+
+		if (initiative.getParticipants().contains(user)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You have already joined this initiative!");
+		}
 
 		initiative.getParticipants().add(user);
 		initiativeRepository.save(initiative);

@@ -51,7 +51,19 @@ function InitiativePage() {
         };
     }, []);
 
+
+
     const handleJoinInitiative = async (id) => {
+
+        const currentInitiative = initiatives.find(item => item.id === id);
+
+        const alreadyJoined = currentInitiative?.participants?.some(p => p.id === user.id);
+
+        if (alreadyJoined) {
+            alert('You have already joined this initiative!');
+            return;
+        }
+
         setJoiningId(id);
         try {
             await InitiativeService.join(id);
@@ -59,7 +71,12 @@ function InitiativePage() {
             setInitiatives(prevInitiatives =>
                 prevInitiatives.map(item => {
                     if (item.id === id) {
-                        return { ...item, participantCount: item.participantCount + 1 };
+                        const updatedParticipants = item.participants ? [...item.participants, user] : [user];
+                        return {
+                            ...item,
+                            participantCount: item.participantCount + 1,
+                            participants: updatedParticipants
+                        };
                     }
                     return item;
                 })
@@ -67,12 +84,11 @@ function InitiativePage() {
 
             alert('You have successfully joined this initiative!');
         } catch (err) {
-            alert(err.response?.data?.message || 'Could not join this initiative. Please try again.');
+            alert(err.response?.data?.message || 'Could not join this initiative.');
         } finally {
             setJoiningId(null);
         }
     };
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
