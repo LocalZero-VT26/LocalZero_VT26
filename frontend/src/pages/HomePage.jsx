@@ -7,7 +7,19 @@ function HomePage() {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        await authService.logout();
+
+        try {
+            await authService.logout();
+        } catch (error) {
+            console.log('Logout failed:', error);
+            localStorage.removeItem('user');
+        } finally {
+            navigate('/');
+        }
+
+
+
+
         navigate('/');
     }
 
