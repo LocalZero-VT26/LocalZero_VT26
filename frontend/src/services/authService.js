@@ -52,7 +52,7 @@ const authService = {
 
         try {
             return JSON.parse(storedUser);
-        } catch (error) {
+        } catch {
             localStorage.removeItem('user');
             return null;
         }

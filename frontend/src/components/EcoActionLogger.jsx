@@ -1,4 +1,6 @@
-import { useState, useEffect} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import authService from '../services/authService';
 import sustainabilityService from "../services/sustainabilityService.js";
 
 
@@ -6,30 +8,81 @@ function EcoActionLogger() {
     const [description, setDescription] = useState('');
     const [message, setMessage] = useState('');
     const [actionsList, setActionsList] = useState([]);
+    const textareaRef = useRef(null);
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        fetchHistory();
-    }, []);
+    const currentUser = authService.getCurrentUser();
 
-    const fetchHistory = async () => {
+    const refreshHistory = useCallback(async () => {
         try {
             const history = await sustainabilityService.getHistory();
             setActionsList(history);
+            setMessage('');
         } catch (error) {
+            if (error.response?.status === 401) {
+                setMessage('Your session expired. Please log in again.');
+                navigate('/');
+                return;
+            }
+
             console.error('Failed to fetch history:', error);
+            setMessage('Failed to load eco-action history.');
         }
-    };
+    }, [navigate]);
+
+    useEffect(() => {
+        if (!currentUser?.token) {
+            return;
+        }
+
+        void (async () => {
+            try {
+                const history = await sustainabilityService.getHistory();
+                setActionsList(history);
+                setMessage('');
+            } catch (error) {
+                if (error.response?.status === 401) {
+                    setMessage('Your session expired. Please log in again.');
+                    navigate('/');
+                    return;
+                }
+
+                console.error('Failed to fetch history:', error);
+                setMessage('Failed to load eco-action history.');
+            }
+        })();
+    }, [currentUser?.token, navigate]);
+
+    useEffect(() => {
+        if (textareaRef.current) {
+            textareaRef.current.style.height = 'auto';
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+        }
+    }, [description]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!currentUser?.token) {
+            setMessage('Please log in before logging an eco-action.');
+            navigate('/');
+            return;
+        }
+
         try {
-            await sustainabilityService.logEcoAction(description);
+            const trimmedDescription = description.trim();
+            await sustainabilityService.logEcoAction(trimmedDescription);
 
             setMessage('Eco action logged successfully!');
             setDescription('');
-            fetchHistory()
+            refreshHistory();
         } catch (error) {
+            if (error.response?.status === 401) {
+                setMessage('Your session expired. Please log in again.');
+                navigate('/');
+                return;
+            }
+
             setMessage('Failed to log eco action. Try again!');
         }
     };
@@ -38,18 +91,35 @@ function EcoActionLogger() {
         <div style={{padding: '20px', border: '1px solid #ccc', margin: '20px', borderRadius: '8px', maxWidth: '400px'}}>
             <h3>Log an Eco-Action</h3>
 
+            {!currentUser?.token && (
+                <p style={{fontWeight: 'bold', color: 'crimson'}}>
+                    Please log in to view and save eco-actions.
+                </p>
+            )}
+
             <form onSubmit={handleSubmit} style={{ marginBottom: '15px' }}>
-                <input
-                    type="text"
-                    placeholder="T.ex. Bicycled to work."
+                <textarea
+                    ref={textareaRef}
+                    placeholder="For example: Bicycled to work."
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    style={{ padding: '8px', marginRight: '10px', width: '60%' }}
-                    required/>
+                    rows={1}
+                    style={{
+                        padding: '8px',
+                        marginRight: '10px',
+                        width: '100%',
+                        minHeight: '44px',
+                        resize: 'none',
+                        overflow: 'hidden',
+                        boxSizing: 'border-box',
+                        marginBottom: '10px'
+                    }}
+                    required
+                />
                 <button type='submit' style={{padding: '8px 16px', cursor: 'pointer'}}>Log Eco-action</button>
             </form>
 
-            {message && <p style={{fontWeight: 'bold', color: 'green'}}>{message}</p>}
+            {message && <p style={{fontWeight: 'bold', color: message.toLowerCase().includes('failed') || message.toLowerCase().includes('expired') || message.toLowerCase().includes('log in') ? 'crimson' : 'green'}}>{message}</p>}
 
             {actionsList.length > 0 && (
                 <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '10px' }}>
