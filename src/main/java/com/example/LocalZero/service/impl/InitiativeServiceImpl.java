@@ -9,10 +9,8 @@ import com.example.LocalZero.service.joinInitiative.Join;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -96,10 +94,6 @@ public class InitiativeServiceImpl implements IInitiativeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Initiative not found with id: " + initiativeId));
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
-
-        if (!user.getRoles().contains(Role.ORGANIZER)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only organizers can post updates");
-        }
 
         Update update = new Update();
         update.setContent(request.getContent());

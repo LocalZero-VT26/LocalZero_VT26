@@ -17,9 +17,6 @@ function InitiativePage() {
 
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [joiningId, setJoiningId] = useState(null);
-    // Removed formData state and related handlers as they are now in InitiativeForm
-
-    const isOrganizer = user?.roles?.includes('ORGANIZER');
 
     useEffect(() => {
         let isMounted = true;
@@ -115,14 +112,12 @@ function InitiativePage() {
                         <p style={{ color: '#6b7280', margin: '6px 0 0 0', fontSize: '15px' }}>Find crowdsourced community work happening near you.</p>
                     </div>
 
-                    {isOrganizer && (
-                        <button
-                            onClick={() => setShowCreateModal(true)}
-                            style={{ padding: '12px 22px', backgroundColor: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '15px' }}
-                        >
-                            Launch Initiative
-                        </button>
-                    )}
+                    <button
+                        onClick={() => setShowCreateModal(true)}
+                        style={{ padding: '12px 22px', backgroundColor: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '15px' }}
+                    >
+                        Launch Initiative
+                    </button>
                 </div>
 
                 {error && (
@@ -166,9 +161,7 @@ function InitiativePage() {
                                             {joiningId === initiative.id ? "Joining..." : joinedInitiatives.includes(initiative.id) ? "Joined" : "Join Team"}
                                         </button>
                                     </div>
-                                    {isOrganizer && (
-                                        <PostUpdateForm initiativeId={initiative.id} />
-                                    )}
+                                    <PostUpdateForm initiativeId={initiative.id} />
                                 </div>
                             </div>
                         ))}
