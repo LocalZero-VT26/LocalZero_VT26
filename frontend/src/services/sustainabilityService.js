@@ -10,7 +10,13 @@ const getHistory = async () => {
     return response.data;
 }
 
+const getCommunityStats = async () => {
+    const response = await api.get('/api/sustainability/dashboard/community');
+    return response.data;
+}
+
 export default {
     logEcoAction,
     getHistory,
+    getCommunityStats,
 };

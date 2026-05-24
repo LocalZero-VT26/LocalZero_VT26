@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import authService from '../services/authService'
 import { useNavigate } from 'react-router-dom'
 import EcoActionLogger from "../components/EcoActionLogger.jsx";
+import SustainabilityDashboard from "../components/SustainabilityDashboard.jsx";
 import InitiativeService from '../services/InitiativeService'
 import UpdateCard from '../components/UpdateCard'
 
@@ -84,7 +85,12 @@ function HomePage() {
                     <EcoActionLogger />
                 </div>
 
-                <div style={{ marginTop: '24px' }}>
+                <div style={{ textAlign: 'left', marginTop: '40px' }}>
+                    <h2>Sustainability Stats</h2>
+                    <SustainabilityDashboard />
+                </div>
+
+                <div style={{ marginTop: '40px', textAlign: 'left' }}>
                     <h3>Activity Feed</h3>
                     {updatesError && <div style={{ color: '#b00020' }}>{updatesError}</div>}
                     {!updatesError && updates.length === 0 && <div style={{ color: '#666' }}>No updates yet</div>}
