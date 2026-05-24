@@ -13,7 +13,8 @@ import com.example.LocalZero.repository.LikeRepository;
 import com.example.LocalZero.repository.UpdateRepository;
 import com.example.LocalZero.repository.UserRepository;
 import com.example.LocalZero.service.INotification;
-import com.example.LocalZero.service.ParticipationService;
+import com.example.LocalZero.service.IParticipationService;
+import com.example.LocalZero.service.IParticipationService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 import org.springframework.dao.DataIntegrityViolationException;
 
 @Service
-public class ParticipationServiceImpl implements ParticipationService {
+public class ParticipationServiceImpl implements IParticipationService {
 
     private final UpdateRepository updateRepository;
     private final UserRepository userRepository;

@@ -37,6 +37,13 @@ function InitiativePage() {
                 const data = await InitiativeService.getAll();
                 if (isMounted) {
                     setInitiatives(data);
+
+                    const alreadyJoinedIds = data
+                        .filter(init => init.participants?.some(p => p.id === user.id))
+                        .map(init => init.id);
+
+                    setJoinedInitiatives(alreadyJoinedIds);
+
                 }
             } catch (err) {
                 if (isMounted) {
@@ -54,7 +61,7 @@ function InitiativePage() {
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [user.id]);
 
     const handleJoinInitiative = async (id) => {
         if (joinedInitiatives.includes(id)) {
