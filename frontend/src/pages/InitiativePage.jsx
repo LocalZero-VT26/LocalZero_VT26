@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import authService from '../services/authService';
 import InitiativeService from '../services/InitiativeService';
 import InitiativeForm from '../components/InitiativeForm';
+import PostUpdateForm from '../components/PostUpdateForm';
 
 function InitiativePage() {
     const navigate = useNavigate();
@@ -150,19 +151,24 @@ function InitiativePage() {
                                         <div><strong>Duration:</strong> {initiative.duration}</div>
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#fafafa', margin: '0 -24px -24px -24px', padding: '16px 24px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px', borderTop: '1px solid #f3f4f6' }}>
-                                    <span style={{ fontSize: '14px', color: '#374151', fontWeight: '500' }}><strong>{initiative.participantCount}</strong> participating</span>
-                                    <button
-                                        onClick={() => handleJoinInitiative(initiative.id)}
-                                        disabled={joiningId === initiative.id || joinedInitiatives.includes(initiative.id)}
-                                        style={{
-                                            padding: '8px 18px',
-                                            backgroundColor: (joinedInitiatives.includes(initiative.id)) ? '#ccc' : '#10b981',
-                                            color: '#ffffff', border: 'none', borderRadius: '4px', cursor: (joinedInitiatives.includes(initiative.id)) ? 'default' : 'pointer', fontWeight: '600', fontSize: '14px'
-                                        }}
-                                    >
-                                        {joiningId === initiative.id ? "Joining..." : joinedInitiatives.includes(initiative.id) ? "Joined" : "Join Team"}
-                                    </button>
+                                <div style={{ backgroundColor: '#fafafa', margin: '0 -24px -24px -24px', padding: '16px 24px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px', borderTop: '1px solid #f3f4f6' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span style={{ fontSize: '14px', color: '#374151', fontWeight: '500' }}><strong>{initiative.participantCount}</strong> participating</span>
+                                        <button
+                                            onClick={() => handleJoinInitiative(initiative.id)}
+                                            disabled={joiningId === initiative.id || joinedInitiatives.includes(initiative.id)}
+                                            style={{
+                                                padding: '8px 18px',
+                                                backgroundColor: (joinedInitiatives.includes(initiative.id)) ? '#ccc' : '#10b981',
+                                                color: '#ffffff', border: 'none', borderRadius: '4px', cursor: (joinedInitiatives.includes(initiative.id)) ? 'default' : 'pointer', fontWeight: '600', fontSize: '14px'
+                                            }}
+                                        >
+                                            {joiningId === initiative.id ? "Joining..." : joinedInitiatives.includes(initiative.id) ? "Joined" : "Join Team"}
+                                        </button>
+                                    </div>
+                                    {isOrganizer && (
+                                        <PostUpdateForm initiativeId={initiative.id} />
+                                    )}
                                 </div>
                             </div>
                         ))}
