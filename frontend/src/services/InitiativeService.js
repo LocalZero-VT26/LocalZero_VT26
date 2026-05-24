@@ -20,6 +20,28 @@ const InitiativeService = {
     postUpdate: async (id, updateData) => {
         const response = await api.post(`/api/initiatives/${id}/updates`, updateData)
         return response.data
+    },
+
+
+    // New endpoints for comments and likes
+    postComment: async (updateId, commentData) => {
+        const response = await api.post(`/api/updates/${updateId}/comments`, commentData)
+        return response.data
+    },
+
+    getComments: async (updateId) => {
+        const response = await api.get(`/api/updates/${updateId}/comments`)
+        return response.data
+    },
+
+    toggleLike: async (updateId) => {
+        const response = await api.post(`/api/updates/${updateId}/likes`)
+        return response.data
+    },
+
+    getLikeInfo: async (updateId) => {
+        const response = await api.get(`/api/updates/${updateId}/likes`)
+        return response.data
     }
 };
 
