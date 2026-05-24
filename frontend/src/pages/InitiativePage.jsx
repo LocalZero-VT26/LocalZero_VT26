@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import authService from '../services/authService';
 import InitiativeService from '../services/InitiativeService';
+import InitiativeForm from '../components/InitiativeForm';
 
 function InitiativePage() {
     const navigate = useNavigate();
@@ -15,14 +16,7 @@ function InitiativePage() {
 
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [joiningId, setJoiningId] = useState(null);
-    const [formData, setFormData] = useState({
-        title: '',
-        description: '',
-        location: user?.location || '',
-        duration: '',
-        category: '',
-        visibility: 'Public'
-    });
+    // Removed formData state and related handlers as they are now in InitiativeForm
 
     const isOrganizer = user?.roles?.includes('ORGANIZER');
 
@@ -82,22 +76,13 @@ function InitiativePage() {
         }
     };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleCreateSubmit = async (e) => {
-        e.preventDefault();
+    const handleCreateSubmit = async (formData) => { // Modified to accept formData as argument
         setError('');
         try {
             const freshInitiative = await InitiativeService.create(formData);
             setInitiatives(prev => [freshInitiative, ...prev]);
             setShowCreateModal(false);
-            setFormData({
-                title: '', description: '', location: user?.location || '',
-                duration: '', category: '', visibility: 'Public'
-            });
+            // Reset form data is handled internally by InitiativeForm if needed or when it's unmounted/remounted
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to establish your initiative.');
         }
@@ -189,30 +174,12 @@ function InitiativePage() {
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '20px' }}>
                     <div style={{ backgroundColor: '#ffffff', borderRadius: '8px', padding: '32px', maxWidth: '550px', width: '100%', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
                         <h2 style={{ margin: '0 0 6px 0', color: '#111827', fontSize: '22px', fontWeight: '700' }}>Establish New Initiative</h2>
-                        <form onSubmit={handleCreateSubmit}>
-                            <div style={{ marginBottom: '16px' }}>
-                                <label htmlFor="title" style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Campaign Title</label>
-                                <input id="title" type="text" name="title" value={formData.title} onChange={handleInputChange} required style={{ width: '100%', padding: '10px 14px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box' }} />
-                            </div>
-                            <div style={{ marginBottom: '16px' }}>
-                                <label htmlFor="description" style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Detailed Description</label>
-                                <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} required rows="3" style={{ width: '100%', padding: '10px 14px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box', fontFamily: 'inherit', resize: 'vertical' }}></textarea>
-                            </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-                                <div>
-                                    <label htmlFor="location" style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Target Location</label>
-                                    <input id="location" type="text" name="location" value={formData.location} onChange={handleInputChange} required style={{ width: '100%', padding: '10px 14px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box' }} />
-                                </div>
-                                <div>
-                                    <label htmlFor="duration" style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Expected Duration</label>
-                                    <input id="duration" type="text" name="duration" value={formData.duration} onChange={handleInputChange} placeholder="e.g. 3 hours, 2 days" required style={{ width: '100%', padding: '10px 14px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box' }} />
-                                </div>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', borderTop: '1px solid #f3f4f6', paddingTop: '20px' }}>
-                                <button type="button" onClick={() => setShowCreateModal(false)} style={{ padding: '10px 18px', backgroundColor: '#ffffff', color: '#4b5563', border: '1px solid #d1d5db', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: '500' }}>Cancel</button>
-                                <button type="submit" style={{ padding: '10px 18px', backgroundColor: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: '600' }}>Submit Broadcast</button>
-                            </div>
-                        </form>
+                        <InitiativeForm
+                            onSubmit={handleCreateSubmit}
+                            onCancel={() => setShowCreateModal(false)}
+                            initialLocation={user?.location || ''}
+                            error={error}
+                        />
                     </div>
                 </div>
             )}

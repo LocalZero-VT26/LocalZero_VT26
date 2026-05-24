@@ -29,7 +29,6 @@ function HomePage() {
                 <h1>LocalZero Dashboard</h1>
                 <p style={{ color: '#666' }}>Ready to make a difference in {user?.location || 'your area'}?</p>
 
-                {/* --- HÄR ÄR KNAPPEN SOM FÖRSVANN --- */}
                 <div style={{ marginTop: '30px', marginBottom: '50px' }}>
                     <button
                         onClick={() => navigate('/initiatives')}
