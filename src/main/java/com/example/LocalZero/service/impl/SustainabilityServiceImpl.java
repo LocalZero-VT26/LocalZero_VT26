@@ -43,11 +43,20 @@ public class SustainabilityServiceImpl implements ISustainabilityService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<EcoActionResponse> getEcoActionsHistory(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
-        return ecoActionRepository.findByUserOrderByTimestampDesc(user).stream()
+        
+        List<com.example.LocalZero.Model.EcoAction> actions = ecoActionRepository.findByUserOrderByTimestampDesc(user);
+        if (actions.size() <= 9) {
+            com.example.LocalZero.service.sustainability.IEcoCommand generateMockCommand = 
+                new com.example.LocalZero.service.sustainability.GenerateMockEcoActionsCommand(user, ecoActionRepository);
+            generateMockCommand.execute();
+            actions = ecoActionRepository.findByUserOrderByTimestampDesc(user);
+        }
+        
+        return actions.stream()
                 .map(action -> new EcoActionResponse(action.getDescription(), action.getTimestamp()))
                 .collect(Collectors.toList());
     }
