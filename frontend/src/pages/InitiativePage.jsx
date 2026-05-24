@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import authService from '../services/authService';
-
 import InitiativeService from '../services/InitiativeService';
 
 function InitiativePage() {
@@ -11,6 +10,8 @@ function InitiativePage() {
     const [initiatives, setInitiatives] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+    const [joinedInitiatives, setJoinedInitiatives] = useState([]);
 
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [joiningId, setJoiningId] = useState(null);
@@ -22,6 +23,13 @@ function InitiativePage() {
         category: '',
         visibility: 'Public'
     });
+
+
+    const isOrganizer =
+        user?.role === 'ORGANIZER' ||
+        user?.role === 'ROLE_ORGANIZER' ||
+        user?.roles?.includes('ORGANIZER') ||
+        user?.roles?.includes('ROLE_ORGANIZER');
 
     useEffect(() => {
         let isMounted = true;
@@ -51,15 +59,8 @@ function InitiativePage() {
         };
     }, []);
 
-
-
     const handleJoinInitiative = async (id) => {
-
-        const currentInitiative = initiatives.find(item => item.id === id);
-
-        const alreadyJoined = currentInitiative?.participants?.some(p => p.id === user.id);
-
-        if (alreadyJoined) {
+        if (joinedInitiatives.includes(id)) {
             alert('You have already joined this initiative!');
             return;
         }
@@ -68,14 +69,14 @@ function InitiativePage() {
         try {
             await InitiativeService.join(id);
 
+            setJoinedInitiatives(prev => [...prev, id]);
+
             setInitiatives(prevInitiatives =>
                 prevInitiatives.map(item => {
                     if (item.id === id) {
-                        const updatedParticipants = item.participants ? [...item.participants, user] : [user];
                         return {
                             ...item,
-                            participantCount: item.participantCount + 1,
-                            participants: updatedParticipants
+                            participantCount: item.participantCount + 1
                         };
                     }
                     return item;
@@ -89,6 +90,7 @@ function InitiativePage() {
             setJoiningId(null);
         }
     };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -99,9 +101,7 @@ function InitiativePage() {
         setError('');
 
         try {
-
             const freshInitiative = await InitiativeService.create(formData);
-
             setInitiatives(prev => [freshInitiative, ...prev]);
             setShowCreateModal(false);
 
@@ -127,7 +127,7 @@ function InitiativePage() {
                 >
                     Back to Dashboard
                 </button>
-                <span style={{ color: '#374151', fontSize: '14px' }}>Acting as: <strong>{user?.name || 'Local Member'}</strong></span>
+                <span style={{ color: '#374151', fontSize: '14px' }}>Acting as: <strong>{user?.name || 'Local Member'}</strong> ({user?.role || 'User'})</span>
             </nav>
 
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
@@ -136,12 +136,17 @@ function InitiativePage() {
                         <h1 style={{ margin: 0, fontSize: '28px', color: '#111827', fontWeight: '700' }}>Active Initiatives</h1>
                         <p style={{ color: '#6b7280', margin: '6px 0 0 0', fontSize: '15px' }}>Find crowdsourced community work happening near you.</p>
                     </div>
-                    <button
-                        onClick={() => setShowCreateModal(true)}
-                        style={{ padding: '12px 22px', backgroundColor: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '15px' }}
-                    >
-                        Launch Initiative
-                    </button>
+
+
+
+                    {isOrganizer && (
+                        <button
+                            onClick={() => setShowCreateModal(true)}
+                            style={{ padding: '12px 22px', backgroundColor: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '15px' }}
+                        >
+                            Launch Initiative
+                        </button>
+                    )}
                 </div>
 
                 {error && (
@@ -155,10 +160,9 @@ function InitiativePage() {
                 ) : initiatives.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '80px 20px', backgroundColor: '#ffffff', borderRadius: '8px', border: '2px dashed #e5e7eb' }}>
                         <h3 style={{ margin: '0 0 8px 0', color: '#374151' }}>No initiatives established yet</h3>
-                        <p style={{ color: '#6b7280', margin: 0 }}>Be the first to step forward and launch a campaign in your zone!</p>
+                        <p style={{ color: '#6b7280', margin: 0 }}>Stay tuned for upcoming campaigns in your zone!</p>
                     </div>
                 ) : (
-
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
                         {initiatives.map((initiative) => (
                             <div key={initiative.id} style={{ backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -178,12 +182,22 @@ function InitiativePage() {
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#fafafa', margin: '0 -24px -24px -24px', padding: '16px 24px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px', borderTop: '1px solid #f3f4f6' }}>
                                     <span style={{ fontSize: '14px', color: '#374151', fontWeight: '500' }}><strong>{initiative.participantCount}</strong> participating</span>
+
                                     <button
                                         onClick={() => handleJoinInitiative(initiative.id)}
-                                        disabled={joiningId === initiative.id}
-                                        style={{ padding: '8px 18px', backgroundColor: joiningId === initiative.id ? '#ccc' : '#10b981', color: '#ffffff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: '600', fontSize: '14px' }}
+                                        disabled={joiningId === initiative.id || joinedInitiatives.includes(initiative.id)}
+                                        style={{
+                                            padding: '8px 18px',
+                                            backgroundColor: (joiningId === initiative.id || joinedInitiatives.includes(initiative.id)) ? '#ccc' : '#10b981',
+                                            color: '#ffffff',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            cursor: (joiningId === initiative.id || joinedInitiatives.includes(initiative.id)) ? 'default' : 'pointer',
+                                            fontWeight: '600',
+                                            fontSize: '14px'
+                                        }}
                                     >
-                                        {joiningId === initiative.id ? "Joining..." : "Join Team"}
+                                        {joiningId === initiative.id ? "Joining..." : joinedInitiatives.includes(initiative.id) ? "Joined" : "Join Team"}
                                     </button>
                                 </div>
                             </div>
@@ -194,11 +208,10 @@ function InitiativePage() {
 
             {showCreateModal && (
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '20px' }}>
-                    <div style={{ backgroundColor: '#ffffff', borderRadius: '#8px', padding: '32px', maxWidth: '550px', width: '100%', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+                    <div style={{ backgroundColor: '#ffffff', borderRadius: '8px', padding: '32px', maxWidth: '550px', width: '100%', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
                         <h2 style={{ margin: '0 0 6px 0', color: '#111827', fontSize: '22px', fontWeight: '700' }}>Establish New Initiative</h2>
-                        <p style={{ color: '#6b7280', fontSize: '14px', margin: '0 0 24px 0' }}>Deploy a crowdsourced campaign within the active community node.</p>
-
                         <form onSubmit={handleCreateSubmit}>
+
                             <div style={{ marginBottom: '16px' }}>
                                 <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Campaign Title</label>
                                 <input type="text" name="title" value={formData.title} onChange={handleInputChange} required style={{ width: '100%', padding: '10px 14px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box' }} />
