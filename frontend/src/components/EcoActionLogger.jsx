@@ -7,51 +7,10 @@ import sustainabilityService from "../services/sustainabilityService.js";
 function EcoActionLogger() {
     const [description, setDescription] = useState('');
     const [message, setMessage] = useState('');
-    const [actionsList, setActionsList] = useState([]);
     const textareaRef = useRef(null);
     const navigate = useNavigate();
 
     const currentUser = authService.getCurrentUser();
-
-    const refreshHistory = useCallback(async () => {
-        try {
-            const history = await sustainabilityService.getHistory();
-            setActionsList(history);
-            setMessage('');
-        } catch (error) {
-            if (error.response?.status === 401) {
-                setMessage('Your session expired. Please log in again.');
-                navigate('/');
-                return;
-            }
-
-            console.error('Failed to fetch history:', error);
-            setMessage('Failed to load eco-action history.');
-        }
-    }, [navigate]);
-
-    useEffect(() => {
-        if (!currentUser?.token) {
-            return;
-        }
-
-        void (async () => {
-            try {
-                const history = await sustainabilityService.getHistory();
-                setActionsList(history);
-                setMessage('');
-            } catch (error) {
-                if (error.response?.status === 401) {
-                    setMessage('Your session expired. Please log in again.');
-                    navigate('/');
-                    return;
-                }
-
-                console.error('Failed to fetch history:', error);
-                setMessage('Failed to load eco-action history.');
-            }
-        })();
-    }, [currentUser?.token, navigate]);
 
     useEffect(() => {
         if (textareaRef.current) {
@@ -75,7 +34,8 @@ function EcoActionLogger() {
 
             setMessage('Eco action logged successfully!');
             setDescription('');
-            refreshHistory();
+            
+            window.location.reload();
         } catch (error) {
             if (error.response?.status === 401) {
                 setMessage('Your session expired. Please log in again.');
@@ -88,9 +48,7 @@ function EcoActionLogger() {
     };
 
     return (
-        <div style={{padding: '20px', border: '1px solid #ccc', margin: '20px', borderRadius: '8px', maxWidth: '400px'}}>
-            <h3>Log an Eco-Action</h3>
-
+        <div style={{ maxWidth: '400px' }}>
             {!currentUser?.token && (
                 <p style={{fontWeight: 'bold', color: 'crimson'}}>
                     Please log in to view and save eco-actions.
@@ -120,22 +78,6 @@ function EcoActionLogger() {
             </form>
 
             {message && <p style={{fontWeight: 'bold', color: message.toLowerCase().includes('failed') || message.toLowerCase().includes('expired') || message.toLowerCase().includes('log in') ? 'crimson' : 'green'}}>{message}</p>}
-
-            {actionsList.length > 0 && (
-                <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '10px' }}>
-                    <h4>Your Eco-action history:</h4>
-                    <ul style={{ paddingLeft: '20px' }}>
-                        {actionsList.map((action, index) => (
-                            <li key={index} style={{ marginBottom: '5px' }}>
-                                {action.description}
-                                <span style={{ fontSize: '0.8em', color: '#666', marginLeft: '10px'}}>
-                                    ({new Date(action.timestamp).toLocaleDateString()})
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
         </div>
     );
 }

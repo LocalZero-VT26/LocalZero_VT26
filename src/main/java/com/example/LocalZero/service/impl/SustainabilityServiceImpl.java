@@ -1,15 +1,18 @@
 package com.example.LocalZero.service.impl;
 
 import com.example.LocalZero.Model.User;
+import com.example.LocalZero.dto.CommunityStatResponse;
 import com.example.LocalZero.dto.EcoActionResponse;
 import com.example.LocalZero.exception.ResourceNotFoundException;
 import com.example.LocalZero.repository.EcoActionRepository;
+import com.example.LocalZero.repository.InitiativeRepository;
 import com.example.LocalZero.repository.UserRepository;
 import com.example.LocalZero.service.ISustainabilityService;
 import com.example.LocalZero.service.sustainability.ContentValidator;
 import com.example.LocalZero.service.sustainability.IEcoCommand;
 import com.example.LocalZero.service.sustainability.LogEcoActionCommand;
 import com.example.LocalZero.service.sustainability.UserValidator;
+import com.example.LocalZero.service.sustainability.dashboard.CommunityDashboardGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,7 @@ public class SustainabilityServiceImpl implements ISustainabilityService {
 
     private final UserRepository userRepository;
     private final EcoActionRepository ecoActionRepository;
+    private final InitiativeRepository initiativeRepository;
 
 
     @Override
@@ -59,5 +63,12 @@ public class SustainabilityServiceImpl implements ISustainabilityService {
         return actions.stream()
                 .map(action -> new EcoActionResponse(action.getDescription(), action.getTimestamp()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CommunityStatResponse> getCommunityEcoActions(String userEmail) {
+        CommunityDashboardGenerator generator = new CommunityDashboardGenerator(userRepository, initiativeRepository, ecoActionRepository);
+        return generator.generateDashboard(userEmail);
     }
 }

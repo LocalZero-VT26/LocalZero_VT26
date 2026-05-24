@@ -10,6 +10,10 @@ import java.util.List;
 
 @Repository
 public interface InitiativeRepository extends JpaRepository<Initiative, Long> {
+
+    @Query("SELECT DISTINCT i FROM Initiative i LEFT JOIN i.participants p WHERE i.creator = :user OR p = :user")
+    List<Initiative> findInitiativesByUser(@Param("user") com.example.LocalZero.Model.User user);
+
 	@Query("""
 			select i.id, count(p)
 			from Initiative i

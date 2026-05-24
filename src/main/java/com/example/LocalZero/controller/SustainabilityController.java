@@ -1,6 +1,7 @@
 package com.example.LocalZero.controller;
 
 
+import com.example.LocalZero.dto.CommunityStatResponse;
 import com.example.LocalZero.dto.EcoActionRequest;
 import com.example.LocalZero.dto.EcoActionResponse;
 import com.example.LocalZero.service.ISustainabilityService;
@@ -33,5 +34,13 @@ public class SustainabilityController {
     ) {
         List<EcoActionResponse> history = sustainabilityService.getEcoActionsHistory(userEmail);
         return ResponseEntity.ok(history);
+    }
+
+    @GetMapping("/dashboard/community")
+    public ResponseEntity<List<CommunityStatResponse>> getCommunityStats(
+            @RequestAttribute("email") String userEmail
+    ) {
+        List<CommunityStatResponse> stats = sustainabilityService.getCommunityEcoActions(userEmail);
+        return ResponseEntity.ok(stats);
     }
 }
