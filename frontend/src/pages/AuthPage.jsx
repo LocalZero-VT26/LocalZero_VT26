@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {useNavigate} from "react-router-dom";
 import authService from "../services/authService";
+import { MALMO_NEIGHBORHOODS, DEFAULT_CITY } from "../data/malmoNeighborhoods";
 
 function AuthPage() {
     const [tab, setTab] = useState("login");
@@ -8,10 +9,6 @@ function AuthPage() {
     const [registerForm, setRegisterForm] = useState({name:'', email:'', password:'', location:''});
     const [error, setError] = useState('');
     const navigate = useNavigate();
-
-    const LOCATIONS = [
-        'Stockholm', 'Gothenburg', 'Malmö', 'Uppsala'
-    ];
 
     const handleLoginChange = (e) => {
         setLoginForm({...loginForm, [e.target.name]: e.target.value});
@@ -81,10 +78,24 @@ function AuthPage() {
             {tab === 'register' && (
                 <form onSubmit={handleRegister}>
                     <input style={inputStyle} type="text" name="name" placeholder="Name" value={registerForm.name} onChange={handleRegisterChange} required />
-                    <select style={inputStyle} name="location" value={registerForm.location} onChange={handleRegisterChange} required>
-                        <option value="">Select location</option>
-                        {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
-                    </select>
+                    <label style={{ display: 'block', fontSize: '13px', marginTop: '8px', color: '#444' }}>
+                        Område i {DEFAULT_CITY}
+                    </label>
+                    <input
+                        style={inputStyle}
+                        type="text"
+                        name="location"
+                        list="malmo-neighborhoods"
+                        placeholder="t.ex. Möllevången"
+                        value={registerForm.location}
+                        onChange={handleRegisterChange}
+                        required
+                    />
+                    <datalist id="malmo-neighborhoods">
+                        {MALMO_NEIGHBORHOODS.map((area) => (
+                            <option key={area} value={area} />
+                        ))}
+                    </datalist>
                     <input style={inputStyle} type="email" name="email" placeholder="Email" value={registerForm.email} onChange={handleRegisterChange} required />
                     <input style={inputStyle} type="password" name="password" placeholder="Password" value={registerForm.password} onChange={handleRegisterChange} required />
                     <button type="submit" style={{ width: '100%', padding: '10px', marginTop: '8px', cursor: 'pointer' }}>Register</button>

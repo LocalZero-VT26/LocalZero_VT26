@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { DEFAULT_CITY, MALMO_NEIGHBORHOODS } from '../data/malmoNeighborhoods';
 
 function InitiativeForm({ onSubmit, onCancel, initialLocation = '', error }) {
     const [formData, setFormData] = useState({
@@ -7,7 +8,7 @@ function InitiativeForm({ onSubmit, onCancel, initialLocation = '', error }) {
         location: initialLocation,
         duration: '',
         category: '',
-        visibility: 'Public' // Default to Public
+        visibility: 'public'
     });
 
     useEffect(() => {
@@ -36,8 +37,23 @@ function InitiativeForm({ onSubmit, onCancel, initialLocation = '', error }) {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
                 <div>
-                    <label htmlFor="location" style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Target Location</label>
-                    <input id="location" type="text" name="location" value={formData.location} onChange={handleInputChange} required style={{ width: '100%', padding: '10px 14px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box' }} />
+                    <label htmlFor="location" style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Område i {DEFAULT_CITY}</label>
+                    <input
+                        id="location"
+                        type="text"
+                        name="location"
+                        list="initiative-malmo-neighborhoods"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        placeholder="t.ex. Rosengård"
+                        required
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box' }}
+                    />
+                    <datalist id="initiative-malmo-neighborhoods">
+                        {MALMO_NEIGHBORHOODS.map((area) => (
+                            <option key={area} value={area} />
+                        ))}
+                    </datalist>
                 </div>
                 <div>
                     <label htmlFor="duration" style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Expected Duration</label>
@@ -51,8 +67,8 @@ function InitiativeForm({ onSubmit, onCancel, initialLocation = '', error }) {
             <div style={{ marginBottom: '16px' }}>
                 <label htmlFor="visibility" style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Visibility</label>
                 <select id="visibility" name="visibility" value={formData.visibility} onChange={handleInputChange} required style={{ width: '100%', padding: '10px 14px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box' }}>
-                    <option value="Public">Public</option>
-                    <option value="Neighborhood">Neighborhood</option>
+                    <option value="public">Public</option>
+                    <option value="neighborhood-specific">Neighborhood</option>
                 </select>
             </div>
 

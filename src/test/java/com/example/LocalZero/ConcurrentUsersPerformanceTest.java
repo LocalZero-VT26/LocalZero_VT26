@@ -37,9 +37,8 @@ class ConcurrentUsersPerformanceTest {
 
     private static final int CONCURRENT_USERS = 10;
     private static final String[] LOCATIONS = {
-            "Stockholm", "Gothenburg", "Malmo", "Uppsala",
-            "Stockholm", "Gothenburg", "Malmo", "Uppsala",
-            "Stockholm", "Gothenburg"
+            "Möllevången", "Rosengård", "Limhamn", "Västra Hamnen", "Centrum",
+            "Oxie", "Hyllie", "Bellevue", "Kirseberg", "Dalaplan"
     };
 
     @LocalServerPort

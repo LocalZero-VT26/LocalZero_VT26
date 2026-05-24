@@ -147,7 +147,7 @@ function InitiativePage() {
                                     <h3 style={{ margin: '0 0 10px 0', color: '#1f2937', fontSize: '18px', fontWeight: '600' }}>{initiative.title}</h3>
                                     <p style={{ fontSize: '14px', color: '#4b5563', margin: '0 0 20px 0', lineHeight: '1.5' }}>{initiative.description}</p>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px', color: '#4b5563', borderTop: '1px solid #f3f4f6', paddingTop: '14px', marginBottom: '20px' }}>
-                                        <div><strong>Location:</strong> {initiative.location}</div>
+                                        <div><strong>Område:</strong> {initiative.location}</div>
                                         <div><strong>Duration:</strong> {initiative.duration}</div>
                                     </div>
                                 </div>

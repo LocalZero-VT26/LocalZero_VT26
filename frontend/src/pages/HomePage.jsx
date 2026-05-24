@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import EcoActionLogger from "../components/EcoActionLogger.jsx";
 import InitiativeService from '../services/InitiativeService'
 import UpdateCard from '../components/UpdateCard'
+import { DEFAULT_CITY } from '../data/malmoNeighborhoods'
 
 function HomePage() {
     const user = authService.getCurrentUser();
@@ -50,7 +51,7 @@ function HomePage() {
 
             <div style={{ padding: '40px', textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
                 <h1>LocalZero Dashboard</h1>
-                <p style={{ color: '#666' }}>Ready to make a difference in {user?.location || 'your area'}?</p>
+                <p style={{ color: '#666' }}>Ready to make a difference in {user?.location ? `${user.location}, ${DEFAULT_CITY}` : `your area in ${DEFAULT_CITY}`}?</p>
 
                 <div style={{ marginTop: '30px', marginBottom: '50px' }}>
                     <button

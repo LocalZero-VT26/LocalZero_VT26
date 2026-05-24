@@ -1,4 +1,5 @@
 import authService from '../services/authService';
+import { DEFAULT_CITY } from '../data/malmoNeighborhoods';
 
 function ProfilePage() {
     const user = authService.getCurrentUser();
@@ -12,7 +13,7 @@ function ProfilePage() {
             <h2>Min profil</h2>
             <p><strong>Namn:</strong> {user.name}</p>
             <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>Plats:</strong> {user.location || 'Ej angiven'}</p>
+            <p><strong>Område:</strong> {user.location ? `${user.location}, ${DEFAULT_CITY}` : 'Ej angivet'}</p>
             <div>
                 <strong>Roller:</strong>
                 <ul>
