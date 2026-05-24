@@ -12,5 +12,5 @@ public interface IInitiativeService {
     InitiativeResponse createInitiative(InitiativeCreateRequest request, String userEmail);
     void joinInitiative(Long initiativeId, String userEmail);
     UpdateResponse postUpdate(Long initiativeId, UpdateCreateRequest request, String userEmail);
-    List<UpdateResponse> getAllUpdates();
+    List<UpdateResponse> getAllUpdates(String userEmail);
 }

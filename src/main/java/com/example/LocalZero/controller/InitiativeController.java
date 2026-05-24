@@ -29,7 +29,7 @@ public class InitiativeController {
 
     @GetMapping("/updates")
     public List<UpdateResponse> getUpdates(@RequestAttribute("email") String email) {
-        return initiativeService.getAllUpdates();
+        return initiativeService.getAllUpdates(email);
     }
 
     @PostMapping
