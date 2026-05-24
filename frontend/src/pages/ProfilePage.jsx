@@ -12,7 +12,7 @@ function ProfilePage() {
             <h2>Min profil</h2>
             <p><strong>Namn:</strong> {user.name}</p>
             <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>Plats:</strong> {user.location}</p>
+            <p><strong>Plats:</strong> {user.location || 'Ej angiven'}</p>
             <div>
                 <strong>Roller:</strong>
                 <ul>
