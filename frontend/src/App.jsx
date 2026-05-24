@@ -1,6 +1,8 @@
 import {Route, Routes, Navigate, useLocation} from "react-router-dom";
 import AuthPage from './pages/AuthPage'
 import HomePage from './pages/HomePage'
+import ChatRoomPage from './pages/ChatRoomPage'
+import ChatPage from './pages/ChatPage'
 import ProfilePage from './pages/ProfilePage'
 import authService from './services/authService'
 
@@ -12,6 +14,9 @@ function App() {
       <Routes>
         <Route path="/" element={user ? <Navigate to="/home" replace /> : <AuthPage />} />
         <Route path="/home" element={user ? <HomePage/> : <Navigate to="/" replace />} />
+        <Route path="/chatrooms" element={user ? <ChatRoomPage /> : <Navigate to="/" replace />} />
+        <Route path="/chat/new" element={user ? <ChatPage /> : <Navigate to="/" replace />} />
+        <Route path="/chat/:roomId" element={user ? <ChatPage /> : <Navigate to="/" replace />} />
         <Route path="/profile" element={user ? <ProfilePage/> : <Navigate to="/" replace />} />
       </Routes>
   )

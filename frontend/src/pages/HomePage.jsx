@@ -41,8 +41,9 @@ function HomePage() {
             <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 24px', borderBottom: '1px solid #ddd' }}>
                 <span>Welcome, <strong>{user?.name}</strong></span>
                 <div style={{ display: 'flex', gap: '8px' }}>
+                    <button onClick={() => navigate('/chatrooms')} style={{ cursor: 'pointer', padding: '6px 16px' }}>Messages</button>
+                    <button onClick={handleLogout} style={{ cursor: 'pointer', padding: '6px 16px' }}>Logout</button>
                     <button onClick={() => navigate('/profile')} style={{cursor: 'pointer', padding: '6px 16px' }}>Profile</button>
-                    <button onClick={handleLogout} style={{cursor: 'pointer', padding: '6px 16px' }}>Logout</button>
                 </div>
             </nav>
 
