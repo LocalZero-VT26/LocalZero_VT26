@@ -3,7 +3,8 @@ package com.example.LocalZero.controller;
 import com.example.LocalZero.dto.CommentCreateRequest;
 import com.example.LocalZero.dto.CommentResponse;
 import com.example.LocalZero.dto.LikeResponse;
-import com.example.LocalZero.service.ParticipationService;
+import com.example.LocalZero.service.IParticipationService;
+import com.example.LocalZero.service.IParticipationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UpdateParticipationController {
 
-    private final ParticipationService participationService;
+    private final IParticipationService participationService;
 
     @PostMapping("/{updateId}/comments")
     public ResponseEntity<CommentResponse> postComment(@PathVariable Long updateId,

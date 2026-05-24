@@ -23,18 +23,16 @@ const authService = {
         return response.data;
     },
 
-    // Logga ut genom att blacklista token på servern och rensa localStorage
     logout: async () => {
         try {
             await api.post('/auth/logout');
-        } catch (error) {
+        } catch (error) { // Standardize on 'error'
             console.error('Logout error:', error);
         } finally {
             localStorage.removeItem('user');
         }
     },
 
-    // Hämta aktuell inloggad användare
     getCurrentUser: () => {
         const storedUser = localStorage.getItem('user');
 
