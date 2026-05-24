@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage'
 import ChatRoomPage from './pages/ChatRoomPage'
 import ChatPage from './pages/ChatPage'
 import ProfilePage from './pages/ProfilePage'
+import InboxPage from './pages/InboxPage'
 import authService from './services/authService'
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/chat/new" element={user ? <ChatPage /> : <Navigate to="/" replace />} />
         <Route path="/chat/:roomId" element={user ? <ChatPage /> : <Navigate to="/" replace />} />
         <Route path="/profile" element={user ? <ProfilePage/> : <Navigate to="/" replace />} />
+        <Route path="/inbox" element={user ? <InboxPage/> : <Navigate to="/" replace />} />
       </Routes>
   )
 }
