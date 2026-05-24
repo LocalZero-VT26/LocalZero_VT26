@@ -25,11 +25,8 @@ function InitiativePage() {
     });
 
 
-    const isOrganizer =
-        user?.role === 'ORGANIZER' ||
-        user?.role === 'ROLE_ORGANIZER' ||
-        user?.roles?.includes('ORGANIZER') ||
-        user?.roles?.includes('ROLE_ORGANIZER');
+
+    const isOrganizer = user?.roles?.includes('ROLE_ORGANIZER');
 
     useEffect(() => {
         let isMounted = true;
@@ -127,7 +124,15 @@ function InitiativePage() {
                 >
                     Back to Dashboard
                 </button>
-                <span style={{ color: '#374151', fontSize: '14px' }}>Acting as: <strong>{user?.name || 'Local Member'}</strong> ({user?.role || 'User'})</span>
+                <span style={{ color: '#374151', fontSize: '14px' }}>
+    Acting as: <strong>{user?.name || 'Local Member'}</strong>
+                    {user?.roles && (
+                        <span style={{ color: '#6b7280', marginLeft: '4px' }}>
+            ({user.roles.map(r => r.replace('ROLE_', '')).join(', ')})
+        </span>
+                    )}
+
+                </span>
             </nav>
 
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
