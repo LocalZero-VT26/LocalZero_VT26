@@ -21,7 +21,10 @@ function HomePage() {
         <div>
             <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 24px', borderBottom: '1px solid #ddd' }}>
                 <span>Welcome, <strong>{user?.name}</strong></span>
-                <button onClick={handleLogout} style={{cursor: 'pointer', padding: '6px 16px' }}>Logout</button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                    <button onClick={() => navigate('/profile')} style={{cursor: 'pointer', padding: '6px 16px' }}>Profile</button>
+                    <button onClick={handleLogout} style={{cursor: 'pointer', padding: '6px 16px' }}>Logout</button>
+                </div>
             </nav>
 
             <div style={{padding: '24px'}}>
