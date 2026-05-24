@@ -17,7 +17,8 @@ public abstract class UserRegistrationTemplate {
         User savedUser = saveUser(user);
         sendNotification(savedUser);
         String token = generateToken(savedUser);
-        return new AuthResponse(savedUser.getId(), savedUser.getName(), savedUser.getEmail(), savedUser.getRoles(), token);
+        return new AuthResponse(savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
+                savedUser.getLocation(), savedUser.getRoles(), token);
     }
 
     protected abstract void validateInput(RegisterRequest request);
