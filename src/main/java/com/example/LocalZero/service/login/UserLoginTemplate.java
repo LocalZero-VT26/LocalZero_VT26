@@ -10,7 +10,8 @@ public abstract class UserLoginTemplate {
         User user = findUser(request.getEmail());
         verifyPassword(request.getPassword(), user.getPassword());
         String token = generateToken(user);
-        return new AuthResponse(user.getId(), user.getName(), user.getEmail(), user.getRoles(), token);
+        return new AuthResponse(user.getId(), user.getName(), user.getEmail(),
+                user.getLocation(), user.getRoles(), token);
     }
 
     protected abstract User findUser(String email);
