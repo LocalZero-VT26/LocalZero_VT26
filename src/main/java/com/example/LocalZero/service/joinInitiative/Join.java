@@ -36,6 +36,18 @@ public class Join {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You have already joined this initiative!");
 		}
 
+		String visibility = initiative.getVisibility() != null ? initiative.getVisibility().toLowerCase() : "";
+		boolean isNeighborhoodSpecific = visibility.equals("neighborhood-specific") || visibility.equals("neighborhood");
+		if (isNeighborhoodSpecific) {
+			boolean isCreator = initiative.getCreator().getEmail().equals(userEmail);
+			String userLocation = user.getLocation() != null ? user.getLocation() : "";
+			String initiativeLocation = initiative.getLocation() != null ? initiative.getLocation() : "";
+			if (!isCreator && !userLocation.equalsIgnoreCase(initiativeLocation)) {
+				throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+						"This initiative is only available in " + initiative.getLocation());
+			}
+		}
+
 		initiative.getParticipants().add(user);
 		initiativeRepository.save(initiative);
 	}

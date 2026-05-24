@@ -8,7 +8,7 @@ import java.util.List;
  * Handles operations such as creating, retrieving, and managing initiatives and their updates.
  */
 public interface IInitiativeService {
-    List<InitiativeResponse> getAllInitiatives();
+    List<InitiativeResponse> getAllInitiatives(String userEmail);
     InitiativeResponse createInitiative(InitiativeCreateRequest request, String userEmail);
     void joinInitiative(Long initiativeId, String userEmail);
     UpdateResponse postUpdate(Long initiativeId, UpdateCreateRequest request, String userEmail);

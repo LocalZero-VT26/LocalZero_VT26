@@ -23,4 +23,16 @@ public interface InitiativeRepository extends JpaRepository<Initiative, Long> {
 			""")
 	List<Object[]> countParticipantsByInitiativeIds(@Param("initiativeIds") List<Long> initiativeIds);
 
+	@Query("""
+			SELECT DISTINCT i FROM Initiative i
+			WHERE LOWER(i.visibility) = 'public'
+			   OR i.creator.email = :userEmail
+			   OR EXISTS (SELECT 1 FROM i.participants p WHERE p.email = :userEmail)
+			   OR (LOWER(i.visibility) IN ('neighborhood-specific', 'neighborhood')
+			       AND LOWER(i.location) = LOWER(:userLocation))
+			""")
+	List<Initiative> findVisibleForUser(
+			@Param("userEmail") String userEmail,
+			@Param("userLocation") String userLocation);
+
 }
