@@ -85,18 +85,22 @@ function HomePage() {
                     <EcoActionLogger />
                 </div>
 
-                <div style={{ textAlign: 'left', marginTop: '40px' }}>
-                    <h2>Sustainability Stats</h2>
-                    <SustainabilityDashboard />
-                </div>
+                <div style={{ display: 'flex', gap: '40px', marginTop: '40px', textAlign: 'left', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                    <div style={{ flex: '2', minWidth: '400px' }}>
+                        <h2 style={{ marginTop: 0 }}>Sustainability Stats</h2>
+                        <SustainabilityDashboard />
+                    </div>
 
-                <div style={{ marginTop: '40px', textAlign: 'left' }}>
-                    <h3>Activity Feed</h3>
-                    {updatesError && <div style={{ color: '#b00020' }}>{updatesError}</div>}
-                    {!updatesError && updates.length === 0 && <div style={{ color: '#666' }}>No updates yet</div>}
-                    {updates.map((update) => (
-                        <UpdateCard key={update.id} update={update} />
-                    ))}
+                    <div style={{ flex: '1', minWidth: '300px' }}>
+                        <h2 style={{ marginTop: 0 }}>Activity Feed</h2>
+                        {updatesError && <div style={{ color: '#b00020' }}>{updatesError}</div>}
+                        {!updatesError && updates.length === 0 && <div style={{ color: '#666' }}>No updates yet</div>}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            {updates.map((update) => (
+                                <UpdateCard key={update.id} update={update} />
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
