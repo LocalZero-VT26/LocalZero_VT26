@@ -23,8 +23,8 @@ public class InitiativeController {
     private final IInitiativeService initiativeService;
 
     @GetMapping
-    public List<InitiativeResponse> getAll() {
-        return initiativeService.getAllInitiatives();
+    public List<InitiativeResponse> getAll(@RequestAttribute("email") String email) {
+        return initiativeService.getAllInitiatives(email);
     }
 
     @GetMapping("/updates")

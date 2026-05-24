@@ -7,7 +7,7 @@ function InitiativeForm({ onSubmit, onCancel, initialLocation = '', error }) {
         location: initialLocation,
         duration: '',
         category: '',
-        visibility: 'Public' // Default to Public
+        visibility: 'public'
     });
 
     useEffect(() => {
@@ -51,8 +51,8 @@ function InitiativeForm({ onSubmit, onCancel, initialLocation = '', error }) {
             <div style={{ marginBottom: '16px' }}>
                 <label htmlFor="visibility" style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Visibility</label>
                 <select id="visibility" name="visibility" value={formData.visibility} onChange={handleInputChange} required style={{ width: '100%', padding: '10px 14px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box' }}>
-                    <option value="Public">Public</option>
-                    <option value="Neighborhood">Neighborhood</option>
+                    <option value="public">Public</option>
+                    <option value="neighborhood-specific">Neighborhood</option>
                 </select>
             </div>
 

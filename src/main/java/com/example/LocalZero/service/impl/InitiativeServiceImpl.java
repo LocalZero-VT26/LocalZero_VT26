@@ -37,8 +37,13 @@ public class InitiativeServiceImpl implements IInitiativeService {
     private final com.example.LocalZero.service.joinInitiative.Join joinService;
 
     @Override
-    public List<InitiativeResponse> getAllInitiatives() {
-        List<Initiative> initiatives = initiativeRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<InitiativeResponse> getAllInitiatives(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
+
+        String userLocation = user.getLocation() != null ? user.getLocation() : "";
+        List<Initiative> initiatives = initiativeRepository.findVisibleForUser(userEmail, userLocation);
         if (initiatives.isEmpty()) {
             return List.of();
         }

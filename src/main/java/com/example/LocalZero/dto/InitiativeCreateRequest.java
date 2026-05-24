@@ -1,6 +1,7 @@
 package com.example.LocalZero.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,5 +31,7 @@ public class InitiativeCreateRequest {
     private String category;
 
     @NotBlank(message = "Visibility is required")
+    @Pattern(regexp = "public|neighborhood-specific", flags = Pattern.Flag.CASE_INSENSITIVE,
+            message = "Visibility must be public or neighborhood-specific")
     private String visibility;
 }

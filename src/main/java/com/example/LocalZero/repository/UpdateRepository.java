@@ -20,7 +20,7 @@ public interface UpdateRepository extends JpaRepository<Update, Long> {
             WHERE LOWER(i.visibility) = 'public'
                OR i.creator.email = :userEmail
                OR EXISTS (SELECT 1 FROM i.participants p WHERE p.email = :userEmail)
-               OR (LOWER(i.visibility) = 'neighborhood-specific'
+               OR (LOWER(i.visibility) IN ('neighborhood-specific', 'neighborhood')
                    AND LOWER(i.location) = LOWER(:userLocation))
             """)
     List<Update> findVisibleForUser(
