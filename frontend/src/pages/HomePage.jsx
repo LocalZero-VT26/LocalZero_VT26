@@ -1,5 +1,6 @@
 import authService from '../services/authService'
 import { useNavigate } from 'react-router-dom'
+import EcoActionLogger from "../components/EcoActionLogger.jsx";
 
 function HomePage() {
     const user = authService.getCurrentUser();
@@ -8,8 +9,9 @@ function HomePage() {
     const handleLogout = async () => {
         try {
             await authService.logout();
-        } catch (err) {
-            console.warn("Backend logout failed, navigating to login anyway", err);
+        } catch (error) {
+            console.log('Logout failed:', error);
+            localStorage.removeItem('user');
         } finally {
             navigate('/');
         }
@@ -23,29 +25,11 @@ function HomePage() {
                 <button onClick={handleLogout} style={{cursor: 'pointer', padding: '6px 16px' }}>Logout</button>
             </nav>
 
-            {/* Main Content Area */}
-            <div style={{ padding: '40px', textAlign: 'center' }}>
-                <h1>LocalZero Dashboard</h1>
-                <p>Ready to make a difference in {user?.location || 'your area'}?</p>
+            <div style={{padding: '24px'}}>
+                <h2>Home</h2>
+                <p>You can see your initiatives and log eco-actions here.</p>
 
-                <div style={{ marginTop: '30px' }}>
-                    {/* Detta är knapparna */}
-                    <button
-                        onClick={() => navigate('/initiatives')}
-                        style={{
-                            padding: '15px 30px',
-                            fontSize: '18px',
-                            backgroundColor: '#28a745',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                            fontWeight: 'bold'
-                        }}
-                    >
-                        Browse & Join Initiatives
-                    </button>
-                </div>
+                <EcoActionLogger />
             </div>
         </div>
     )
