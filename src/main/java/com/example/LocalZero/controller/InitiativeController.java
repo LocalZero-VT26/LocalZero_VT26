@@ -27,6 +27,11 @@ public class InitiativeController {
         return initiativeService.getAllInitiatives();
     }
 
+    @GetMapping("/updates")
+    public List<UpdateResponse> getUpdates(@RequestAttribute("email") String email) {
+        return initiativeService.getAllUpdates(email);
+    }
+
     @PostMapping
     public ResponseEntity<InitiativeResponse> create(@Valid @RequestBody InitiativeCreateRequest request,
                                                      @RequestAttribute("email") String email) {

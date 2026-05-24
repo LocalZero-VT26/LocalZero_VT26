@@ -26,8 +26,8 @@ const authService = {
     logout: async () => {
         try {
             await api.post('/auth/logout');
-        } catch (err) {
-            console.error('Logout error:', err);
+        } catch (error) { // Standardize on 'error'
+            console.error('Logout error:', error);
         } finally {
             localStorage.removeItem('user');
         }
