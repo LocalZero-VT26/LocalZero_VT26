@@ -46,35 +46,12 @@ public class ChatServiceImpl implements IChatService {
     @Override
     @Transactional
     public ChatMessageResponse sendMessage(String senderEmail, SendMessageRequest request) {
-        String recipientEmail = request.getRecipientEmail();
-
-        User recipient = userRepository.findByEmail(recipientEmail)
-                .orElseThrow(() -> new ResourceNotFoundException("Recipient not found"));
-
-        String email1;
-        String email2;
-
-        if (senderEmail.compareTo(recipientEmail) < 0) {
-            email1 = senderEmail;
-            email2 = recipientEmail;
-        } else {
-            email1 = recipientEmail;
-            email2 = senderEmail;
-        }
-
-        ChatRoom chatRoom = chatRoomRepository.findByUser1EmailAndUser2Email(email1, email2)
-                .orElseGet(() -> chatRoomRepository.save(new ChatRoom(email1, email2)));
-
-        ChatMessage saved = chatMessageRepository.save(new ChatMessage(chatRoom, senderEmail, request.getContent()));
-
-        if (!onlineUserRegistery.isOnline(recipientEmail)) {
-            User sender = userRepository.findByEmail(senderEmail).orElse(null);
-            if (sender != null) {
-                chatMessageNotification.notify(recipient.getEmail(), sender.getName());
-            }
-        }
-
-        return new ChatMessageResponse(saved.getId(), saved.getSenderEmail(), saved.getContent(), saved.getCreatedAt(), saved.isRead());
+        com.example.LocalZero.service.messaging.command.ChatCommand command = 
+                new com.example.LocalZero.service.messaging.command.SendMessageCommand(
+                senderEmail, request, chatRoomRepository, chatMessageRepository, userRepository, 
+                chatMessageNotification, onlineUserRegistery);
+                
+        return command.execute();
     }
 
     @Override
