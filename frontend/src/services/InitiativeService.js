@@ -20,8 +20,8 @@ const InitiativeService = {
     postUpdate: async (id, updateData) => {
         const response = await api.post(`/api/initiatives/${id}/updates`, updateData)
         return response.data
-    }
-,
+    },
+
 
     // New endpoints for comments and likes
     postComment: async (updateId, commentData) => {

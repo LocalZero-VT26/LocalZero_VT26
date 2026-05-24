@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @Service
 public class ParticipationServiceImpl implements ParticipationService {
@@ -70,10 +71,12 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     @Override
     public List<CommentResponse> getComments(Long updateId) {
+        Update update = updateRepository.findById(updateId)
+            .orElseThrow(() -> new ResourceNotFoundException("Update not found with id: " + updateId));
         List<Comment> comments = commentRepository.findByUpdateIdOrderByCreatedAtAsc(updateId);
         return comments.stream()
-                .map(c -> new CommentResponse(c.getId(), c.getContent(), c.getAuthor().getName(), c.getCreatedAt()))
-                .collect(Collectors.toList());
+            .map(c -> new CommentResponse(c.getId(), c.getContent(), c.getAuthor().getName(), c.getCreatedAt()))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -91,15 +94,21 @@ public class ParticipationServiceImpl implements ParticipationService {
             liked = false;
         } else {
             LikeEntity like = new LikeEntity(user, update);
-            likeRepository.save(like);
-            liked = true;
-            String targetEmail = update.getAuthor().getEmail();
-            if (!targetEmail.equals(userEmail)) {
-                likeNotification.notify(targetEmail, user.getName());
+            try {
+                likeRepository.save(like);
+                liked = true;
+                String targetEmail = update.getAuthor().getEmail();
+                if (!targetEmail.equals(userEmail)) {
+                    likeNotification.notify(targetEmail, user.getName());
+                }
+            } catch (DataIntegrityViolationException ex) {
+                // Another concurrent request inserted the same (user_id, update_id) unique row.
+                // Treat as already liked: re-read state and set liked=true.
+                liked = likeRepository.findByUpdateIdAndUserId(updateId, user.getId()).isPresent();
             }
         }
 
-        int count = (int) likeRepository.countByUpdateId(updateId);
+        long count = likeRepository.countByUpdateId(updateId);
         return new LikeResponse(count, liked);
     }
 
@@ -110,7 +119,7 @@ public class ParticipationServiceImpl implements ParticipationService {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
 
-        int count = (int) likeRepository.countByUpdateId(updateId);
+        long count = likeRepository.countByUpdateId(updateId);
         boolean liked = likeRepository.findByUpdateIdAndUserId(updateId, user.getId()).isPresent();
         return new LikeResponse(count, liked);
     }
