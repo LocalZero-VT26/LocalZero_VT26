@@ -1,7 +1,6 @@
 package com.example.LocalZero.controller;
 
 
-import com.example.LocalZero.Model.EcoAction;
 import com.example.LocalZero.dto.EcoActionRequest;
 import com.example.LocalZero.dto.EcoActionResponse;
 import com.example.LocalZero.service.ISustainabilityService;

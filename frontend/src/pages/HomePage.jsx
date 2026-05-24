@@ -7,7 +7,6 @@ function HomePage() {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-
         try {
             await authService.logout();
         } catch (error) {
@@ -16,11 +15,6 @@ function HomePage() {
         } finally {
             navigate('/');
         }
-
-
-
-
-        navigate('/');
     }
 
     return (
@@ -32,7 +26,7 @@ function HomePage() {
 
             <div style={{padding: '24px'}}>
                 <h2>Home</h2>
-                <p>You can see your initiatives and logg Eco-actions here.</p>
+                <p>You can see your initiatives and log eco-actions here.</p>
 
                 <EcoActionLogger />
             </div>

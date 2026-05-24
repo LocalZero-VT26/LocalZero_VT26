@@ -43,10 +43,10 @@ public class SustainabilityServiceImpl implements ISustainabilityService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<EcoActionResponse> getEcoActionsHistory(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
-                .orElse(null);
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
         return ecoActionRepository.findByUserOrderByTimestampDesc(user).stream()
                 .map(action -> new EcoActionResponse(action.getDescription(), action.getTimestamp()))
                 .collect(Collectors.toList());
