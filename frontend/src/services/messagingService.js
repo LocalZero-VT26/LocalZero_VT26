@@ -3,7 +3,7 @@ import api from './api'
 const messagingService = {
 
     getRooms: async () => {
-        const response = await api.get('/messsaging/rooms')
+        const response = await api.get('/messaging/rooms')
         return response.data
     },
 
