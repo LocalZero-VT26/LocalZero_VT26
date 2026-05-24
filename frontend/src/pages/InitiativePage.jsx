@@ -24,8 +24,6 @@ function InitiativePage() {
         visibility: 'Public'
     });
 
-
-
     const isOrganizer = user?.roles?.includes('ORGANIZER');
 
     useEffect(() => {
@@ -39,7 +37,7 @@ function InitiativePage() {
                     setInitiatives(data);
 
                     const alreadyJoinedIds = data
-                        .filter(init => init.participants?.some(p => p.id === user.id))
+                        .filter(init => init.joinedByCurrentUser)
                         .map(init => init.id);
 
                     setJoinedInitiatives(alreadyJoinedIds);
@@ -56,38 +54,27 @@ function InitiativePage() {
             }
         };
 
-        fetchInitiatives();
+        if (user?.id) {
+            fetchInitiatives();
+        }
 
         return () => {
             isMounted = false;
         };
-    }, [user.id]);
+    }, [user?.id]);
 
     const handleJoinInitiative = async (id) => {
-        if (joinedInitiatives.includes(id)) {
-            alert('You have already joined this initiative!');
-            return;
-        }
+        if (joinedInitiatives.includes(id)) return;
 
         setJoiningId(id);
         try {
             await InitiativeService.join(id);
-
             setJoinedInitiatives(prev => [...prev, id]);
-
             setInitiatives(prevInitiatives =>
-                prevInitiatives.map(item => {
-                    if (item.id === id) {
-                        return {
-                            ...item,
-                            participantCount: item.participantCount + 1
-                        };
-                    }
-                    return item;
-                })
+                prevInitiatives.map(item =>
+                    item.id === id ? { ...item, participantCount: item.participantCount + 1 } : item
+                )
             );
-
-            alert('You have successfully joined this initiative!');
         } catch (err) {
             alert(err.response?.data?.message || 'Could not join this initiative.');
         } finally {
@@ -103,19 +90,13 @@ function InitiativePage() {
     const handleCreateSubmit = async (e) => {
         e.preventDefault();
         setError('');
-
         try {
             const freshInitiative = await InitiativeService.create(formData);
             setInitiatives(prev => [freshInitiative, ...prev]);
             setShowCreateModal(false);
-
             setFormData({
-                title: '',
-                description: '',
-                location: user?.location || '',
-                duration: '',
-                category: '',
-                visibility: 'Public'
+                title: '', description: '', location: user?.location || '',
+                duration: '', category: '', visibility: 'Public'
             });
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to establish your initiative.');
@@ -132,13 +113,12 @@ function InitiativePage() {
                     Back to Dashboard
                 </button>
                 <span style={{ color: '#374151', fontSize: '14px' }}>
-    Acting as: <strong>{user?.name || 'Local Member'}</strong>
+                    Acting as: <strong>{user?.name || 'Local Member'}</strong>
                     {user?.roles && (
                         <span style={{ color: '#6b7280', marginLeft: '4px' }}>
-            ({user.roles.map(r => r.replace('ROLE_', '')).join(', ')})
-        </span>
+                            ({user.roles.map(r => r.replace('ROLE_', '')).join(', ')})
+                        </span>
                     )}
-
                 </span>
             </nav>
 
@@ -148,8 +128,6 @@ function InitiativePage() {
                         <h1 style={{ margin: 0, fontSize: '28px', color: '#111827', fontWeight: '700' }}>Active Initiatives</h1>
                         <p style={{ color: '#6b7280', margin: '6px 0 0 0', fontSize: '15px' }}>Find crowdsourced community work happening near you.</p>
                     </div>
-
-
 
                     {isOrganizer && (
                         <button
@@ -169,11 +147,6 @@ function InitiativePage() {
 
                 {loading ? (
                     <div style={{ textAlign: 'center', padding: '60px 0', color: '#4b5563' }}>Loading localized projects...</div>
-                ) : initiatives.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '80px 20px', backgroundColor: '#ffffff', borderRadius: '8px', border: '2px dashed #e5e7eb' }}>
-                        <h3 style={{ margin: '0 0 8px 0', color: '#374151' }}>No initiatives established yet</h3>
-                        <p style={{ color: '#6b7280', margin: 0 }}>Stay tuned for upcoming campaigns in your zone!</p>
-                    </div>
                 ) : (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
                         {initiatives.map((initiative) => (
@@ -194,19 +167,13 @@ function InitiativePage() {
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#fafafa', margin: '0 -24px -24px -24px', padding: '16px 24px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px', borderTop: '1px solid #f3f4f6' }}>
                                     <span style={{ fontSize: '14px', color: '#374151', fontWeight: '500' }}><strong>{initiative.participantCount}</strong> participating</span>
-
                                     <button
                                         onClick={() => handleJoinInitiative(initiative.id)}
                                         disabled={joiningId === initiative.id || joinedInitiatives.includes(initiative.id)}
                                         style={{
                                             padding: '8px 18px',
-                                            backgroundColor: (joiningId === initiative.id || joinedInitiatives.includes(initiative.id)) ? '#ccc' : '#10b981',
-                                            color: '#ffffff',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            cursor: (joiningId === initiative.id || joinedInitiatives.includes(initiative.id)) ? 'default' : 'pointer',
-                                            fontWeight: '600',
-                                            fontSize: '14px'
+                                            backgroundColor: (joinedInitiatives.includes(initiative.id)) ? '#ccc' : '#10b981',
+                                            color: '#ffffff', border: 'none', borderRadius: '4px', cursor: (joinedInitiatives.includes(initiative.id)) ? 'default' : 'pointer', fontWeight: '600', fontSize: '14px'
                                         }}
                                     >
                                         {joiningId === initiative.id ? "Joining..." : joinedInitiatives.includes(initiative.id) ? "Joined" : "Join Team"}
@@ -223,7 +190,6 @@ function InitiativePage() {
                     <div style={{ backgroundColor: '#ffffff', borderRadius: '8px', padding: '32px', maxWidth: '550px', width: '100%', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
                         <h2 style={{ margin: '0 0 6px 0', color: '#111827', fontSize: '22px', fontWeight: '700' }}>Establish New Initiative</h2>
                         <form onSubmit={handleCreateSubmit}>
-
                             <div style={{ marginBottom: '16px' }}>
                                 <label htmlFor="title" style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Campaign Title</label>
                                 <input id="title" type="text" name="title" value={formData.title} onChange={handleInputChange} required style={{ width: '100%', padding: '10px 14px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box' }} />
@@ -240,26 +206,6 @@ function InitiativePage() {
                                 <div>
                                     <label htmlFor="duration" style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Expected Duration</label>
                                     <input id="duration" type="text" name="duration" value={formData.duration} onChange={handleInputChange} placeholder="e.g. 3 hours, 2 days" required style={{ width: '100%', padding: '10px 14px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box' }} />
-                                </div>
-                            </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '28px' }}>
-                                <div>
-                                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Category Scope</label>
-                                    <select name="category" value={formData.category} onChange={handleInputChange} required style={{ width: '100%', padding: '10px 14px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box', backgroundColor: '#fff' }}>
-                                        <option value="">Select category...</option>
-                                        <option value="Environment">Environment</option>
-                                        <option value="Education">Education</option>
-                                        <option value="Safety">Safety</option>
-                                        <option value="Social Support">Social Support</option>
-                                        <option value="Infrastructure">Infrastructure</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Visibility Policy</label>
-                                    <select name="visibility" value={formData.visibility} onChange={handleInputChange} style={{ width: '100%', padding: '10px 14px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box', backgroundColor: '#fff' }}>
-                                        <option value="Public">Public</option>
-                                        <option value="Internal">Internal</option>
-                                    </select>
                                 </div>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', borderTop: '1px solid #f3f4f6', paddingTop: '20px' }}>
