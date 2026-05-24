@@ -26,7 +26,7 @@ function InitiativePage() {
 
 
 
-    const isOrganizer = user?.roles?.includes('ROLE_ORGANIZER');
+    const isOrganizer = user?.roles?.includes('ORGANIZER');
 
     useEffect(() => {
         let isMounted = true;
