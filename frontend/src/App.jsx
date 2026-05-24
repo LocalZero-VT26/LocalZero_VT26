@@ -12,7 +12,10 @@ function App() {
         <Routes>
             <Route path="/" element={user ? <Navigate to="/home" replace /> : <AuthPage />} />
             <Route path="/home" element={user ? <HomePage/> : <Navigate to="/" replace />} />
-            <Route path="/initiatives" element={<InitiativePage/>} />
+            <Route
+                path="/initiatives"
+                element={user ? <InitiativePage /> : <Navigate to="/" replace />}
+            />
         </Routes>
     );
 }
