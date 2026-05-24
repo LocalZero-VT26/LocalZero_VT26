@@ -7,6 +7,8 @@ import com.example.LocalZero.dto.*;
 import com.example.LocalZero.exception.ResourceNotFoundException;
 import com.example.LocalZero.service.joinInitiative.Join;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class InitiativeServiceImpl implements IInitiativeService {
+
+    private static final int UPDATES_FEED_LIMIT = 20;
 
     private final InitiativeRepository initiativeRepository;
     private final UserRepository userRepository;
@@ -101,6 +105,29 @@ public class InitiativeServiceImpl implements IInitiativeService {
         Update savedUpdate = updateRepository.save(update);
         return new UpdateResponse(savedUpdate.getId(), savedUpdate.getContent(),
                 savedUpdate.getImageUrl(), user.getName(), savedUpdate.getCreatedAt());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UpdateResponse> getAllUpdates(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
+
+        String userLocation = user.getLocation() != null ? user.getLocation() : "";
+
+        PageRequest pageRequest = PageRequest.of(
+                0, UPDATES_FEED_LIMIT, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        return updateRepository.findVisibleForUser(userEmail, userLocation, pageRequest)
+                .stream()
+                .map(update -> new UpdateResponse(
+                        update.getId(),
+                        update.getContent(),
+                        update.getImageUrl(),
+                        update.getAuthor().getName(),
+                        update.getCreatedAt()
+                ))
+                .collect(Collectors.toList());
     }
 
     private InitiativeResponse mapToInitiativeResponse(Initiative initiative, int participantCount) {

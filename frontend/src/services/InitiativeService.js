@@ -7,6 +7,11 @@ const InitiativeService = {
         return response.data
     },
 
+    getUpdates: async () => {
+        const response = await api.get('/api/initiatives/updates')
+        return response.data
+    },
+
     create: async (initiativeData) => {
         const response = await api.post('/api/initiatives', initiativeData)
         return response.data
