@@ -1,13 +1,20 @@
 import authService from '../services/authService'
 import { useNavigate } from 'react-router-dom'
+import EcoActionLogger from "../components/EcoActionLogger.jsx";
 
 function HomePage() {
     const user = authService.getCurrentUser();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        await authService.logout();
-        navigate('/');
+        try {
+            await authService.logout();
+        } catch (error) {
+            console.log('Logout failed:', error);
+            localStorage.removeItem('user');
+        } finally {
+            navigate('/');
+        }
     }
 
     return (
@@ -16,6 +23,13 @@ function HomePage() {
                 <span>Welcome, <strong>{user?.name}</strong></span>
                 <button onClick={handleLogout} style={{cursor: 'pointer', padding: '6px 16px' }}>Logout</button>
             </nav>
+
+            <div style={{padding: '24px'}}>
+                <h2>Home</h2>
+                <p>You can see your initiatives and log eco-actions here.</p>
+
+                <EcoActionLogger />
+            </div>
         </div>
     )
 }
