@@ -2,5 +2,7 @@ package com.example.LocalZero.Model;
 
 public enum NotificationType {
     NEW_INITIATIVE,
-    NEW_MESSAGE
+    NEW_MESSAGE,
+    NEW_COMMENT,
+    NEW_LIKE
 }

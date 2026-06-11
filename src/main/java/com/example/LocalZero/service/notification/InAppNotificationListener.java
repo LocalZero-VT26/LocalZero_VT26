@@ -6,6 +6,8 @@ import com.example.LocalZero.repository.NotificationRepository;
 import com.example.LocalZero.repository.UserRepository;
 import com.example.LocalZero.service.notification.event.InitiativeCreatedEvent;
 import com.example.LocalZero.service.notification.event.NewChatMessageEvent;
+import com.example.LocalZero.service.notification.event.UpdateCommentedEvent;
+import com.example.LocalZero.service.notification.event.UpdateLikedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -45,5 +47,21 @@ public class InAppNotificationListener {
         notificationRepository.save(new Notification(
                 event.recipientEmail(), NotificationType.NEW_MESSAGE,
                 "New message from " + event.senderName(), INBOX_LINK));
+    }
+
+    @EventListener
+    public void onUpdateCommented(UpdateCommentedEvent event) {
+        notificationRepository.save(new Notification(
+                event.recipientEmail(), NotificationType.NEW_COMMENT,
+                event.commenterName() + " commented on your update",
+                "/initiatives/" + event.initiativeId()));
+    }
+
+    @EventListener
+    public void onUpdateLiked(UpdateLikedEvent event) {
+        notificationRepository.save(new Notification(
+                event.recipientEmail(), NotificationType.NEW_LIKE,
+                event.likerName() + " liked your update",
+                "/initiatives/" + event.initiativeId()));
     }
 }

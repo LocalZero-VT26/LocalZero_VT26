@@ -6,7 +6,6 @@ import com.example.LocalZero.Model.User;
 import com.example.LocalZero.exception.InvalidCredentialException;
 import com.example.LocalZero.repository.BlacklistedTokenRepository;
 import com.example.LocalZero.repository.UserRepository;
-import com.example.LocalZero.service.INotification;
 import com.example.LocalZero.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,8 +23,6 @@ public class UserDeleteAccount extends UserDeleteAccountTemplate {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final BlacklistedTokenRepository blacklistedTokenRepository;
-    private final INotification accountDeleteNotification;
-
 
     @Override
     protected String extractEmail(String token) {
@@ -56,10 +53,5 @@ public class UserDeleteAccount extends UserDeleteAccountTemplate {
     @Override
     protected void deleteUser(User user) {
         userRepository.delete(user);
-    }
-
-    @Override
-    protected void sendNotification(User user) {
-        accountDeleteNotification.notify(user.getEmail(), user.getName());
     }
 }
