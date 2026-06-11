@@ -35,4 +35,7 @@ public interface InitiativeRepository extends JpaRepository<Initiative, Long> {
 			@Param("userEmail") String userEmail,
 			@Param("userLocation") String userLocation);
 
+	@Query("SELECT i.id FROM Initiative i JOIN i.participants p WHERE p.email = :userEmail")
+	List<Long> findIdsJoinedByUser(@Param("userEmail") String userEmail);
+
 }

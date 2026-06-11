@@ -13,6 +13,8 @@ import java.util.List;
 public interface UpdateRepository extends JpaRepository<Update, Long> {
     List<Update> findByInitiativeId(Long initiativeId);
 
+    List<Update> findByInitiativeIdOrderByCreatedAtDesc(Long initiativeId);
+
     @Query("""
             SELECT DISTINCT u FROM Update u
             JOIN FETCH u.author

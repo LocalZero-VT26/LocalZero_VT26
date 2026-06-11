@@ -103,7 +103,11 @@ public class InitiativeServiceImpl implements IInitiativeService {
                 creator
         );
 
-        return mapToInitiativeResponse(initiativeRepository.save(initiative), 0, false);
+        // The creator takes part in their own initiative from the start,
+        // so they can post updates and show up in the participant count.
+        initiative.getParticipants().add(creator);
+
+        return mapToInitiativeResponse(initiativeRepository.save(initiative), 1, true);
     }
 
     @Override
@@ -125,6 +129,12 @@ public class InitiativeServiceImpl implements IInitiativeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Initiative not found with id: " + initiativeId));
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
+
+        boolean isCreator = initiative.getCreator().getEmail().equals(userEmail);
+        if (!isCreator && !initiative.getParticipants().contains(user)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "You must join this initiative before posting updates.");
+        }
 
         Update update = new Update();
         update.setContent(request.getContent());
