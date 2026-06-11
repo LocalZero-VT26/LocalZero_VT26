@@ -32,6 +32,18 @@ public class InitiativeController {
         return initiativeService.getAllUpdates(email);
     }
 
+    @GetMapping("/{id}")
+    public InitiativeResponse getById(@PathVariable Long id,
+                                      @RequestAttribute("email") String email) {
+        return initiativeService.getInitiativeById(id, email);
+    }
+
+    @GetMapping("/{id}/updates")
+    public List<UpdateResponse> getInitiativeUpdates(@PathVariable Long id,
+                                                     @RequestAttribute("email") String email) {
+        return initiativeService.getUpdatesForInitiative(id, email);
+    }
+
     @PostMapping
     public ResponseEntity<InitiativeResponse> create(@Valid @RequestBody InitiativeCreateRequest request,
                                                      @RequestAttribute("email") String email) {
@@ -43,6 +55,13 @@ public class InitiativeController {
     public ResponseEntity<Void> join(@PathVariable Long id,
                                      @RequestAttribute("email") String email) {
         initiativeService.joinInitiative(id, email);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}/leave")
+    public ResponseEntity<Void> leave(@PathVariable Long id,
+                                      @RequestAttribute("email") String email) {
+        initiativeService.leaveInitiative(id, email);
         return ResponseEntity.ok().build();
     }
 

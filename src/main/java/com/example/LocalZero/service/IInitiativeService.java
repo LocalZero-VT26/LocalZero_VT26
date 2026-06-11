@@ -9,8 +9,11 @@ import java.util.List;
  */
 public interface IInitiativeService {
     List<InitiativeResponse> getAllInitiatives(String userEmail);
+    InitiativeResponse getInitiativeById(Long initiativeId, String userEmail);
     InitiativeResponse createInitiative(InitiativeCreateRequest request, String userEmail);
     void joinInitiative(Long initiativeId, String userEmail);
+    void leaveInitiative(Long initiativeId, String userEmail);
     UpdateResponse postUpdate(Long initiativeId, UpdateCreateRequest request, String userEmail);
     List<UpdateResponse> getAllUpdates(String userEmail);
+    List<UpdateResponse> getUpdatesForInitiative(Long initiativeId, String userEmail);
 }

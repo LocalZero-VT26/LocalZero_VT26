@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import authService from '../services/authService';
 import InitiativeService from '../services/InitiativeService';
 import InitiativeForm from '../components/InitiativeForm';
-import PostUpdateForm from '../components/PostUpdateForm';
 
 function InitiativePage() {
     const navigate = useNavigate();
@@ -79,6 +78,9 @@ function InitiativePage() {
         try {
             const freshInitiative = await InitiativeService.create(formData);
             setInitiatives(prev => [freshInitiative, ...prev]);
+            if (freshInitiative.joinedByCurrentUser) {
+                setJoinedInitiatives(prev => [...prev, freshInitiative.id]);
+            }
             setShowCreateModal(false);
             // Reset form data is handled internally by InitiativeForm if needed or when it's unmounted/remounted
         } catch (err) {
@@ -131,7 +133,11 @@ function InitiativePage() {
                 ) : (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
                         {initiatives.map((initiative) => (
-                            <div key={initiative.id} style={{ backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                            <div
+                                key={initiative.id}
+                                onClick={() => navigate(`/initiatives/${initiative.id}`)}
+                                style={{ backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer' }}
+                            >
                                 <div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                                         <span style={{ fontSize: '11px', backgroundColor: '#eff6ff', color: '#1e40af', padding: '4px 10px', borderRadius: '9999px', fontWeight: '700', textTransform: 'uppercase' }}>
@@ -150,7 +156,10 @@ function InitiativePage() {
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <span style={{ fontSize: '14px', color: '#374151', fontWeight: '500' }}><strong>{initiative.participantCount}</strong> participating</span>
                                         <button
-                                            onClick={() => handleJoinInitiative(initiative.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleJoinInitiative(initiative.id);
+                                            }}
                                             disabled={joiningId === initiative.id || joinedInitiatives.includes(initiative.id)}
                                             style={{
                                                 padding: '8px 18px',
@@ -161,7 +170,6 @@ function InitiativePage() {
                                             {joiningId === initiative.id ? "Joining..." : joinedInitiatives.includes(initiative.id) ? "Joined" : "Join Team"}
                                         </button>
                                     </div>
-                                    <PostUpdateForm initiativeId={initiative.id} />
                                 </div>
                             </div>
                         ))}

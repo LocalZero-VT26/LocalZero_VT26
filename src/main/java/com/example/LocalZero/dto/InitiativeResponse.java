@@ -23,4 +23,5 @@ public class InitiativeResponse {
     private String category;
     private String visibility;
     private int participantCount;
+    private boolean joinedByCurrentUser;
 }
