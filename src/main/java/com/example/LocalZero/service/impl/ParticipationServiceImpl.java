@@ -59,13 +59,8 @@ public class ParticipationServiceImpl implements IParticipationService {
 
         Comment saved = commentRepository.save(comment);
 
-        // Observer pattern: announce the comment so the in-app notification
-        // listener can notify the update's author without coupling to it here.
-        String targetEmail = update.getAuthor().getEmail();
-        if (!targetEmail.equals(userEmail)) {
-            eventPublisher.publishEvent(new UpdateCommentedEvent(
-                    update.getInitiative().getId(), targetEmail, user.getName()));
-        }
+        eventPublisher.publishEvent(new UpdateCommentedEvent(
+                update.getInitiative().getId(), user.getEmail(), user.getName()));
 
         return new CommentResponse(saved.getId(), saved.getContent(), user.getName(), saved.getCreatedAt());
     }

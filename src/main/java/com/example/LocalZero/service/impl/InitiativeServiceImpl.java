@@ -8,6 +8,7 @@ import com.example.LocalZero.exception.ResourceNotFoundException;
 import com.example.LocalZero.service.joinInitiative.Join;
 import com.example.LocalZero.service.joinInitiative.Leave;
 import com.example.LocalZero.service.notification.event.InitiativeCreatedEvent;
+import com.example.LocalZero.service.notification.event.UpdatePostedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
@@ -153,6 +154,10 @@ public class InitiativeServiceImpl implements IInitiativeService {
         update.setAuthor(user);
 
         Update savedUpdate = updateRepository.save(update);
+
+        eventPublisher.publishEvent(new UpdatePostedEvent(
+                initiative.getId(), user.getEmail(), user.getName()));
+
         return new UpdateResponse(savedUpdate.getId(), savedUpdate.getContent(),
                 savedUpdate.getImageUrl(), user.getName(), savedUpdate.getCreatedAt());
     }

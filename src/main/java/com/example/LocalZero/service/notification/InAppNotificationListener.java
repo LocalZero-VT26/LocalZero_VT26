@@ -1,13 +1,16 @@
 package com.example.LocalZero.service.notification;
 
+import com.example.LocalZero.Model.Initiative;
 import com.example.LocalZero.Model.Notification;
 import com.example.LocalZero.Model.NotificationType;
+import com.example.LocalZero.repository.InitiativeRepository;
 import com.example.LocalZero.repository.NotificationRepository;
 import com.example.LocalZero.repository.UserRepository;
 import com.example.LocalZero.service.notification.event.InitiativeCreatedEvent;
 import com.example.LocalZero.service.notification.event.NewChatMessageEvent;
 import com.example.LocalZero.service.notification.event.UpdateCommentedEvent;
 import com.example.LocalZero.service.notification.event.UpdateLikedEvent;
+import com.example.LocalZero.service.notification.event.UpdatePostedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -25,6 +28,7 @@ public class InAppNotificationListener {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+    private final InitiativeRepository initiativeRepository;
 
     @EventListener
     public void onInitiativeCreated(InitiativeCreatedEvent event) {
@@ -50,11 +54,21 @@ public class InAppNotificationListener {
     }
 
     @EventListener
+    public void onUpdatePosted(UpdatePostedEvent event) {
+        notifyInitiativeMembers(
+                event.initiativeId(),
+                event.authorEmail(),
+                NotificationType.NEW_UPDATE,
+                event.authorName() + " posted a new update");
+    }
+
+    @EventListener
     public void onUpdateCommented(UpdateCommentedEvent event) {
-        notificationRepository.save(new Notification(
-                event.recipientEmail(), NotificationType.NEW_COMMENT,
-                event.commenterName() + " commented on your update",
-                "/initiatives/" + event.initiativeId()));
+        notifyInitiativeMembers(
+                event.initiativeId(),
+                event.commenterEmail(),
+                NotificationType.NEW_COMMENT,
+                event.commenterName() + " commented on an update");
     }
 
     @EventListener
@@ -64,4 +78,21 @@ public class InAppNotificationListener {
                 event.likerName() + " liked your update",
                 "/initiatives/" + event.initiativeId()));
     }
+
+    private void notifyInitiativeMembers(Long initiativeId, String actorEmail,
+                                         NotificationType type, String title) {
+        Initiative initiative = initiativeRepository.findById(initiativeId).orElse(null);
+        if (initiative == null) {
+            return;
+        }
+
+        String linkTarget = "/initiatives/" + initiativeId;
+        String fullTitle = title + " in " + initiative.getTitle();
+
+        initiative.getParticipants().stream()
+                .filter(user -> !user.getEmail().equals(actorEmail))
+                .forEach(user -> notificationRepository.save(new Notification(
+                        user.getEmail(), type, fullTitle, linkTarget)));
+    }
 }
+
