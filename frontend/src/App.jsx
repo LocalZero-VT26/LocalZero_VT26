@@ -2,6 +2,7 @@ import {Routes, Route, Navigate, useLocation} from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
 import InitiativePage from './pages/InitiativePage';
+import InitiativeDetailPage from './pages/InitiativeDetailPage';
 import ProfilePage from './pages/ProfilePage';
 import InboxPage from './pages/InboxPage';
 import authService from './services/authService';
@@ -17,6 +18,10 @@ function App() {
             <Route
                 path="/initiatives"
                 element={user ? <InitiativePage /> : <Navigate to="/" replace />}
+            />
+            <Route
+                path="/initiatives/:id"
+                element={user ? <InitiativeDetailPage /> : <Navigate to="/" replace />}
             />
             <Route path="/profile" element={user ? <ProfilePage/> : <Navigate to="/" replace />} />
             <Route path="/inbox" element={user ? <InboxPage/> : <Navigate to="/" replace />} />

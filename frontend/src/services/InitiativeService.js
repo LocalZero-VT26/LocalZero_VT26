@@ -12,6 +12,16 @@ const InitiativeService = {
         return response.data
     },
 
+    getById: async (id) => {
+        const response = await api.get(`/api/initiatives/${id}`)
+        return response.data
+    },
+
+    getUpdatesForInitiative: async (id) => {
+        const response = await api.get(`/api/initiatives/${id}/updates`)
+        return response.data
+    },
+
     create: async (initiativeData) => {
         const response = await api.post('/api/initiatives', initiativeData)
         return response.data
@@ -19,6 +29,11 @@ const InitiativeService = {
 
     join: async (id) => {
         const response = await api.post(`/api/initiatives/${id}/join`)
+        return response.data
+    },
+
+    leave: async (id) => {
+        const response = await api.delete(`/api/initiatives/${id}/leave`)
         return response.data
     },
 
