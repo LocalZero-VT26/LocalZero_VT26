@@ -63,7 +63,6 @@ public class InAppNotificationListener {
         notifyInitiativeMembers(
                 event.initiativeId(),
                 event.authorEmail(),
-                NotificationType.NEW_UPDATE,
                 event.authorName() + " posted a new update");
     }
 
@@ -73,7 +72,6 @@ public class InAppNotificationListener {
         notifyInitiativeMembers(
                 event.initiativeId(),
                 event.commenterEmail(),
-                NotificationType.NEW_COMMENT,
                 event.commenterName() + " commented on an update");
     }
 
@@ -81,13 +79,12 @@ public class InAppNotificationListener {
     @Transactional
     public void onUpdateLiked(UpdateLikedEvent event) {
         notificationRepository.save(new Notification(
-                event.recipientEmail(), NotificationType.NEW_LIKE,
+                event.recipientEmail(), NotificationType.NEW_INITIATIVE,
                 truncate(event.likerName() + " liked your update"),
                 "/initiatives/" + event.initiativeId()));
     }
 
-    private void notifyInitiativeMembers(Long initiativeId, String actorEmail,
-                                         NotificationType type, String title) {
+    private void notifyInitiativeMembers(Long initiativeId, String actorEmail, String title) {
         Initiative initiative = initiativeRepository.findByIdWithParticipants(initiativeId).orElse(null);
         if (initiative == null) {
             return;
@@ -99,7 +96,7 @@ public class InAppNotificationListener {
         initiative.getParticipants().stream()
                 .filter(user -> !user.getEmail().equals(actorEmail))
                 .forEach(user -> notificationRepository.save(new Notification(
-                        user.getEmail(), type, fullTitle, linkTarget)));
+                        user.getEmail(), NotificationType.NEW_INITIATIVE, fullTitle, linkTarget)));
     }
 
     private static String truncate(String title) {
