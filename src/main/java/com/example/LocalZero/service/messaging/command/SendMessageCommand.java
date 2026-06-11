@@ -12,6 +12,8 @@ import com.example.LocalZero.repository.UserRepository;
 import com.example.LocalZero.service.INotification;
 import com.example.LocalZero.service.OnlineUserRegistery;
 import com.example.LocalZero.service.messaging.MessageProcessorTemplate;
+import com.example.LocalZero.service.notification.event.NewChatMessageEvent;
+import org.springframework.context.ApplicationEventPublisher;
 
 public class SendMessageCommand extends MessageProcessorTemplate implements ChatCommand {
 
@@ -23,6 +25,7 @@ public class SendMessageCommand extends MessageProcessorTemplate implements Chat
     private final UserRepository userRepository;
     private final INotification chatMessageNotification;
     private final OnlineUserRegistery onlineUserRegistery;
+    private final ApplicationEventPublisher eventPublisher;
     
     private User recipient;
 
@@ -31,7 +34,8 @@ public class SendMessageCommand extends MessageProcessorTemplate implements Chat
                               ChatMessageRepository chatMessageRepository,
                               UserRepository userRepository,
                               INotification chatMessageNotification,
-                              OnlineUserRegistery onlineUserRegistery) {
+                              OnlineUserRegistery onlineUserRegistery,
+                              ApplicationEventPublisher eventPublisher) {
         this.senderEmail = senderEmail;
         this.request = request;
         this.chatRoomRepository = chatRoomRepository;
@@ -39,6 +43,7 @@ public class SendMessageCommand extends MessageProcessorTemplate implements Chat
         this.userRepository = userRepository;
         this.chatMessageNotification = chatMessageNotification;
         this.onlineUserRegistery = onlineUserRegistery;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -75,11 +80,14 @@ public class SendMessageCommand extends MessageProcessorTemplate implements Chat
 
     @Override
     protected void notifyUser(String senderEmail, SendMessageRequest request) {
-        if (!onlineUserRegistery.isOnline(recipient.getEmail())) {
-            User sender = userRepository.findByEmail(senderEmail).orElse(null);
-            if (sender != null) {
-                chatMessageNotification.notify(recipient.getEmail(), sender.getName());
-            }
+        User sender = userRepository.findByEmail(senderEmail).orElse(null);
+        String senderName = sender != null ? sender.getName() : senderEmail;
+
+        // In-app notification is always created; email is only sent when the recipient is offline.
+        eventPublisher.publishEvent(new NewChatMessageEvent(recipient.getEmail(), senderName));
+
+        if (!onlineUserRegistery.isOnline(recipient.getEmail()) && sender != null) {
+            chatMessageNotification.notify(recipient.getEmail(), sender.getName());
         }
     }
 }
