@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import messagingService from '../services/messagingService';
 import authService from '../services/authService';
+import NotificationBell from '../components/NotificationBell.jsx';
 
 const InboxPage = () => {
     const navigate = useNavigate();
@@ -90,7 +91,8 @@ const InboxPage = () => {
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#f5f5f5' }}>
             <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 24px', borderBottom: '1px solid #ddd', backgroundColor: '#fff' }}>
                 <span style={{ fontWeight: 'bold' }}>Messaging Inbox</span>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <NotificationBell />
                     <button onClick={() => navigate('/home')} style={{cursor: 'pointer', padding: '6px 16px' }}>Home</button>
                     <button onClick={() => navigate('/profile')} style={{cursor: 'pointer', padding: '6px 16px' }}>Profile</button>
                 </div>

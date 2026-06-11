@@ -2,6 +2,7 @@ import authService from '../services/authService'
 import { useNavigate } from 'react-router-dom'
 import EcoActionLogger from "../components/EcoActionLogger.jsx";
 import SustainabilityDashboard from "../components/SustainabilityDashboard.jsx";
+import NotificationBell from "../components/NotificationBell.jsx";
 
 function HomePage() {
     const user = authService.getCurrentUser();
@@ -23,7 +24,8 @@ function HomePage() {
 
             <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 24px', borderBottom: '1px solid #ddd', backgroundColor: 'white' }}>
                 <span>Welcome, <strong>{user?.name}</strong></span>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <NotificationBell />
                     <button onClick={() => navigate('/inbox')} style={{cursor: 'pointer', padding: '6px 16px' }}>Inbox</button>
                     <button onClick={handleLogout} style={{ cursor: 'pointer', padding: '6px 16px' }}>Logout</button>
                     <button onClick={() => navigate('/profile')} style={{cursor: 'pointer', padding: '6px 16px' }}>Profile</button>
