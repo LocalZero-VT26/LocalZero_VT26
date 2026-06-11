@@ -57,12 +57,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             request.setAttribute("email", jwtService.extractEmail(token));
             request.setAttribute("roles", jwtService.extractRoles(token));
-
-            filterChain.doFilter(request, response);
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+            return;
         }
 
+        filterChain.doFilter(request, response);
     }
 
 }

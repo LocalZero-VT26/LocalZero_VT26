@@ -12,10 +12,10 @@ import com.example.LocalZero.repository.CommentRepository;
 import com.example.LocalZero.repository.LikeRepository;
 import com.example.LocalZero.repository.UpdateRepository;
 import com.example.LocalZero.repository.UserRepository;
-import com.example.LocalZero.service.INotification;
 import com.example.LocalZero.service.IParticipationService;
-import com.example.LocalZero.service.IParticipationService;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.example.LocalZero.service.notification.event.UpdateCommentedEvent;
+import com.example.LocalZero.service.notification.event.UpdateLikedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,21 +30,18 @@ public class ParticipationServiceImpl implements IParticipationService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
-    private final INotification commentNotification;
-    private final INotification likeNotification;
+    private final ApplicationEventPublisher eventPublisher;
 
     public ParticipationServiceImpl(UpdateRepository updateRepository,
                                     UserRepository userRepository,
                                     CommentRepository commentRepository,
                                     LikeRepository likeRepository,
-                                    @Qualifier("commentNotification") INotification commentNotification,
-                                    @Qualifier("likeNotification") INotification likeNotification) {
+                                    ApplicationEventPublisher eventPublisher) {
         this.updateRepository = updateRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.likeRepository = likeRepository;
-        this.commentNotification = commentNotification;
-        this.likeNotification = likeNotification;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -62,10 +59,9 @@ public class ParticipationServiceImpl implements IParticipationService {
 
         Comment saved = commentRepository.save(comment);
 
-        String targetEmail = update.getAuthor().getEmail();
-        if (!targetEmail.equals(userEmail)) {
-            commentNotification.notify(targetEmail, user.getName());
-        }
+        Long initiativeId = updateRepository.findInitiativeIdByUpdateId(updateId);
+        eventPublisher.publishEvent(new UpdateCommentedEvent(
+                initiativeId, user.getEmail(), user.getName()));
 
         return new CommentResponse(saved.getId(), saved.getContent(), user.getName(), saved.getCreatedAt());
     }
@@ -100,7 +96,9 @@ public class ParticipationServiceImpl implements IParticipationService {
                 liked = true;
                 String targetEmail = update.getAuthor().getEmail();
                 if (!targetEmail.equals(userEmail)) {
-                    likeNotification.notify(targetEmail, user.getName());
+                    Long initiativeId = updateRepository.findInitiativeIdByUpdateId(updateId);
+                    eventPublisher.publishEvent(new UpdateLikedEvent(
+                            initiativeId, targetEmail, user.getName()));
                 }
             } catch (DataIntegrityViolationException ex) {
                 // Another concurrent request inserted the same (user_id, update_id) unique row.

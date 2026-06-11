@@ -9,9 +9,9 @@ import com.example.LocalZero.exception.ResourceNotFoundException;
 import com.example.LocalZero.repository.ChatMessageRepository;
 import com.example.LocalZero.repository.ChatRoomRepository;
 import com.example.LocalZero.repository.UserRepository;
-import com.example.LocalZero.service.INotification;
-import com.example.LocalZero.service.OnlineUserRegistery;
 import com.example.LocalZero.service.messaging.MessageProcessorTemplate;
+import com.example.LocalZero.service.notification.event.NewChatMessageEvent;
+import org.springframework.context.ApplicationEventPublisher;
 
 public class SendMessageCommand extends MessageProcessorTemplate implements ChatCommand {
 
@@ -21,8 +21,7 @@ public class SendMessageCommand extends MessageProcessorTemplate implements Chat
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
-    private final INotification chatMessageNotification;
-    private final OnlineUserRegistery onlineUserRegistery;
+    private final ApplicationEventPublisher eventPublisher;
     
     private User recipient;
 
@@ -30,15 +29,13 @@ public class SendMessageCommand extends MessageProcessorTemplate implements Chat
                               ChatRoomRepository chatRoomRepository,
                               ChatMessageRepository chatMessageRepository,
                               UserRepository userRepository,
-                              INotification chatMessageNotification,
-                              OnlineUserRegistery onlineUserRegistery) {
+                              ApplicationEventPublisher eventPublisher) {
         this.senderEmail = senderEmail;
         this.request = request;
         this.chatRoomRepository = chatRoomRepository;
         this.chatMessageRepository = chatMessageRepository;
         this.userRepository = userRepository;
-        this.chatMessageNotification = chatMessageNotification;
-        this.onlineUserRegistery = onlineUserRegistery;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -75,11 +72,9 @@ public class SendMessageCommand extends MessageProcessorTemplate implements Chat
 
     @Override
     protected void notifyUser(String senderEmail, SendMessageRequest request) {
-        if (!onlineUserRegistery.isOnline(recipient.getEmail())) {
-            User sender = userRepository.findByEmail(senderEmail).orElse(null);
-            if (sender != null) {
-                chatMessageNotification.notify(recipient.getEmail(), sender.getName());
-            }
-        }
+        User sender = userRepository.findByEmail(senderEmail).orElse(null);
+        String senderName = sender != null ? sender.getName() : senderEmail;
+
+        eventPublisher.publishEvent(new NewChatMessageEvent(recipient.getEmail(), senderName));
     }
 }

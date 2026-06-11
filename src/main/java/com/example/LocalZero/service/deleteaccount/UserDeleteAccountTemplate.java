@@ -11,7 +11,6 @@ public abstract class UserDeleteAccountTemplate {
         verifyPassword(request.getPassword(), user.getPassword());
         blacklistToken(token);
         deleteUser(user);
-        sendNotification(user);
     }
 
     protected abstract String extractEmail(String token);
@@ -19,5 +18,4 @@ public abstract class UserDeleteAccountTemplate {
     protected abstract void verifyPassword(String rawPassword, String hashPassword);
     protected abstract void blacklistToken(String token);
     protected abstract void deleteUser(User user);
-    protected abstract void sendNotification(User user);
 }

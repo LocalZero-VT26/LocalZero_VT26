@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import authService from '../services/authService';
 import InitiativeService from '../services/InitiativeService';
 import InitiativeForm from '../components/InitiativeForm';
+import NotificationBell from '../components/NotificationBell.jsx';
 
 function InitiativePage() {
     const navigate = useNavigate();
@@ -97,14 +98,17 @@ function InitiativePage() {
                 >
                     Back to Dashboard
                 </button>
-                <span style={{ color: '#374151', fontSize: '14px' }}>
-                    Acting as: <strong>{user?.name || 'Local Member'}</strong>
-                    {user?.roles && (
-                        <span style={{ color: '#6b7280', marginLeft: '4px' }}>
-                            ({user.roles.map(r => r.replace('ROLE_', '')).join(', ')})
-                        </span>
-                    )}
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ color: '#374151', fontSize: '14px' }}>
+                        Acting as: <strong>{user?.name || 'Local Member'}</strong>
+                        {user?.roles && (
+                            <span style={{ color: '#6b7280', marginLeft: '4px' }}>
+                                ({user.roles.map(r => r.replace('ROLE_', '')).join(', ')})
+                            </span>
+                        )}
+                    </span>
+                    <NotificationBell />
+                </div>
             </nav>
 
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
