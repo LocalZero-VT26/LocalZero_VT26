@@ -65,4 +65,41 @@ public class UserServiceImpl implements IUserService {
         return result;
     }
 
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public void assignRole(com.example.LocalZero.dto.AssignRoleRequest request, String callerEmail) {
+        User caller = userRepository.findByEmail(callerEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("Caller not found"));
+
+        User target = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("Target user not found"));
+
+        //CoR
+        com.example.LocalZero.service.validation.RoleAssignmentValidator
+                callerCheck = new com.example.LocalZero.service.validation.CallerPermissionValidator();
+        com.example.LocalZero.service.validation.RoleAssignmentValidator
+                locationCheck = new com.example.LocalZero.service.validation.LocationMatchValidator();
+        com.example.LocalZero.service.validation.RoleAssignmentValidator
+                transitionCheck = new com.example.LocalZero.service.validation.RoleTransitionValidator();
+
+        callerCheck.setNext(locationCheck);
+        locationCheck.setNext(transitionCheck);
+
+        callerCheck.validate(caller, target, request);
+
+        List<Role> targetRoles = target.getRoles();
+        if (request.getRole() == Role.ORGANIZER) {
+            if (!targetRoles.contains(Role.ORGANIZER)) {
+                targetRoles.add(Role.ORGANIZER);
+            }
+        } else if (request.getRole() == Role.RESIDENT) {
+            targetRoles.clear();
+            targetRoles.add(Role.RESIDENT);
+        } else if (request.getRole() == Role.ADMIN) {
+            if (!targetRoles.contains(Role.ADMIN)) {
+                targetRoles.add(Role.ADMIN);
+            }
+        }
+        userRepository.save(target);
+    }
 }
