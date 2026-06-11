@@ -6,15 +6,20 @@ import com.example.LocalZero.service.IInitiativeService;
 import com.example.LocalZero.dto.*;
 import com.example.LocalZero.exception.ResourceNotFoundException;
 import com.example.LocalZero.service.joinInitiative.Join;
+import com.example.LocalZero.service.joinInitiative.Leave;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -32,7 +37,8 @@ public class InitiativeServiceImpl implements IInitiativeService {
     private final InitiativeRepository initiativeRepository;
     private final UserRepository userRepository;
     private final UpdateRepository updateRepository;
-    private final com.example.LocalZero.service.joinInitiative.Join joinService;
+    private final Join joinService;
+    private final Leave leaveService;
 
     @Override
     @Transactional(readOnly = true)
@@ -57,9 +63,28 @@ public class InitiativeServiceImpl implements IInitiativeService {
             participantCounts.put(initiativeId, count);
         }
 
+        Set<Long> joinedIds = new HashSet<>(initiativeRepository.findIdsJoinedByUser(userEmail));
+
         return initiatives.stream()
-                .map(initiative -> mapToInitiativeResponse(initiative, participantCounts.getOrDefault(initiative.getId(), 0)))
+                .map(initiative -> mapToInitiativeResponse(
+                        initiative,
+                        participantCounts.getOrDefault(initiative.getId(), 0),
+                        joinedIds.contains(initiative.getId())))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public InitiativeResponse getInitiativeById(Long initiativeId, String userEmail) {
+        Initiative initiative = initiativeRepository.findById(initiativeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Initiative not found with id: " + initiativeId));
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
+
+        requireVisibleTo(initiative, user);
+
+        boolean joined = initiative.getParticipants().contains(user);
+        return mapToInitiativeResponse(initiative, initiative.getParticipants().size(), joined);
     }
 
     @Override
@@ -78,13 +103,19 @@ public class InitiativeServiceImpl implements IInitiativeService {
                 creator
         );
 
-        return mapToInitiativeResponse(initiativeRepository.save(initiative), 0);
+        return mapToInitiativeResponse(initiativeRepository.save(initiative), 0, false);
     }
 
     @Override
     @Transactional
     public void joinInitiative(Long initiativeId, String userEmail) {
         joinService.joinInitiative(initiativeId, userEmail);
+    }
+
+    @Override
+    @Transactional
+    public void leaveInitiative(Long initiativeId, String userEmail) {
+        leaveService.leaveInitiative(initiativeId, userEmail);
     }
 
     @Override
@@ -129,7 +160,52 @@ public class InitiativeServiceImpl implements IInitiativeService {
                 .collect(Collectors.toList());
     }
 
-    private InitiativeResponse mapToInitiativeResponse(Initiative initiative, int participantCount) {
+    @Override
+    @Transactional(readOnly = true)
+    public List<UpdateResponse> getUpdatesForInitiative(Long initiativeId, String userEmail) {
+        Initiative initiative = initiativeRepository.findById(initiativeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Initiative not found with id: " + initiativeId));
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
+
+        requireVisibleTo(initiative, user);
+
+        return updateRepository.findByInitiativeIdOrderByCreatedAtDesc(initiativeId)
+                .stream()
+                .map(update -> new UpdateResponse(
+                        update.getId(),
+                        update.getContent(),
+                        update.getImageUrl(),
+                        update.getAuthor().getName(),
+                        update.getCreatedAt()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Applies the same visibility rules as the repository queries:
+     * public initiatives are open to everyone, otherwise the user must be
+     * the creator, a participant, or live in the initiative's neighborhood.
+     */
+    private void requireVisibleTo(Initiative initiative, User user) {
+        String visibility = initiative.getVisibility() != null ? initiative.getVisibility().toLowerCase() : "";
+        if (visibility.equals("public")) {
+            return;
+        }
+        if (initiative.getCreator().getEmail().equals(user.getEmail())
+                || initiative.getParticipants().contains(user)) {
+            return;
+        }
+        boolean isNeighborhoodSpecific = visibility.equals("neighborhood-specific") || visibility.equals("neighborhood");
+        String userLocation = user.getLocation() != null ? user.getLocation() : "";
+        String initiativeLocation = initiative.getLocation() != null ? initiative.getLocation() : "";
+        if (isNeighborhoodSpecific && userLocation.equalsIgnoreCase(initiativeLocation)) {
+            return;
+        }
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this initiative.");
+    }
+
+    private InitiativeResponse mapToInitiativeResponse(Initiative initiative, int participantCount, boolean joinedByCurrentUser) {
         InitiativeResponse response = new InitiativeResponse();
         response.setId(initiative.getId());
         response.setTitle(initiative.getTitle());
@@ -139,6 +215,7 @@ public class InitiativeServiceImpl implements IInitiativeService {
         response.setCategory(initiative.getCategory());
         response.setVisibility(initiative.getVisibility());
         response.setParticipantCount(participantCount);
+        response.setJoinedByCurrentUser(joinedByCurrentUser);
         return response;
     }
 }
