@@ -13,12 +13,12 @@ public class RoleTransitionValidator extends RoleAssignmentValidator {
         Role requestedRole = request.getRole();
 
         if (requestedRole == Role.ADMIN && !isAdmin) {
-            throw new ValidationException("Only admins can assign the admin role.");
+            throw new ValidationException("Only admins can assign the admin role!");
         }
 
         boolean targetIsOrganizer = target.getRoles().contains(Role.ORGANIZER);
         if (targetIsOrganizer && requestedRole == Role.RESIDENT && !isAdmin) {
-            throw new ValidationException("Only organizers can assign the admin role.");
+            throw new ValidationException("Only admins can demote organizers to residents!");
         }
     }
 }

@@ -100,6 +100,6 @@ public class UserServiceImpl implements IUserService {
                 targetRoles.add(Role.ADMIN);
             }
         }
-        userRepository.save(caller);
+        userRepository.save(target);
     }
 }

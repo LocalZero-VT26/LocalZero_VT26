@@ -3,7 +3,7 @@ package com.example.LocalZero.service.validation;
 import com.example.LocalZero.Model.User;
 import com.example.LocalZero.dto.AssignRoleRequest;
 
-public class RoleAssignmentValidator {
+public abstract class RoleAssignmentValidator {
 
     protected RoleAssignmentValidator next;
 
