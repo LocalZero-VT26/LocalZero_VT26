@@ -59,8 +59,9 @@ public class ParticipationServiceImpl implements IParticipationService {
 
         Comment saved = commentRepository.save(comment);
 
+        Long initiativeId = updateRepository.findInitiativeIdByUpdateId(updateId);
         eventPublisher.publishEvent(new UpdateCommentedEvent(
-                update.getInitiative().getId(), user.getEmail(), user.getName()));
+                initiativeId, user.getEmail(), user.getName()));
 
         return new CommentResponse(saved.getId(), saved.getContent(), user.getName(), saved.getCreatedAt());
     }
@@ -95,8 +96,9 @@ public class ParticipationServiceImpl implements IParticipationService {
                 liked = true;
                 String targetEmail = update.getAuthor().getEmail();
                 if (!targetEmail.equals(userEmail)) {
+                    Long initiativeId = updateRepository.findInitiativeIdByUpdateId(updateId);
                     eventPublisher.publishEvent(new UpdateLikedEvent(
-                            update.getInitiative().getId(), targetEmail, user.getName()));
+                            initiativeId, targetEmail, user.getName()));
                 }
             } catch (DataIntegrityViolationException ex) {
                 // Another concurrent request inserted the same (user_id, update_id) unique row.

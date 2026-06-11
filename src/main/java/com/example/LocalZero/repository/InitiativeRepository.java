@@ -7,9 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface InitiativeRepository extends JpaRepository<Initiative, Long> {
+
+	@Query("SELECT DISTINCT i FROM Initiative i LEFT JOIN FETCH i.participants WHERE i.id = :id")
+	Optional<Initiative> findByIdWithParticipants(@Param("id") Long id);
 
     @Query("SELECT DISTINCT i FROM Initiative i LEFT JOIN i.participants p WHERE i.creator = :user OR p = :user")
     List<Initiative> findInitiativesByUser(@Param("user") com.example.LocalZero.Model.User user);
