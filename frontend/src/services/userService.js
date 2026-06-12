@@ -2,7 +2,7 @@ import api from './api'
 
 const userService = {
     getAvailableUser: async () => {
-        const response = await api.get('/users/available')
+        const response = await api.get('/api/users/available')
         return response.data
     }
 }
