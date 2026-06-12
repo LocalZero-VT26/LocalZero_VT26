@@ -10,7 +10,7 @@ function AuthPage() {
     const navigate = useNavigate();
 
     const LOCATIONS = [
-        'Stockholm', 'Gothenburg', 'Malmö', 'Uppsala'
+        'Norrmalm', 'Haga',  'Södervärn', 'Möllan', 'Västra Hamnen', 'Rosengård', 'Hyllie', 'Limhamn',
     ];
 
     const handleLoginChange = (e) => {
@@ -82,7 +82,7 @@ function AuthPage() {
                 <form onSubmit={handleRegister}>
                     <input style={inputStyle} type="text" name="name" placeholder="Name" value={registerForm.name} onChange={handleRegisterChange} required />
                     <select style={inputStyle} name="location" value={registerForm.location} onChange={handleRegisterChange} required>
-                        <option value="">Select location</option>
+                        <option value="">Select neighborhood</option>
                         {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
                     </select>
                     <input style={inputStyle} type="email" name="email" placeholder="Email" value={registerForm.email} onChange={handleRegisterChange} required />
