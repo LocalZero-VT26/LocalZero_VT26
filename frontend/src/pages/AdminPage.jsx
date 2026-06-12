@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppNav from '../components/AppNav';
 import authService from '../services/authService';
@@ -25,18 +25,12 @@ function AdminPage() {
 
     const userIsAdmin = isAdmin(currentUser);
 
-    useEffect(() => {
-        if (!canManageRoles(currentUser)) {
-            navigate('/home');
-            return;
-        }
-        loadUsers();
-    }, [currentUser, navigate]);
-
-    const loadUsers = async () => {
+    const loadUsers = useCallback(async (isRefresh = false) => {
         try {
             setError('');
-            setLoading(true);
+            if (!isRefresh) {
+                setLoading(true);
+            }
             const data = await userService.getManageableUsers();
             setUsers(data);
         } catch (err) {
@@ -44,7 +38,16 @@ function AdminPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        const user = authService.getCurrentUser();
+        if (!canManageRoles(user)) {
+            navigate('/home');
+            return;
+        }
+        loadUsers();
+    }, [navigate, loadUsers]);
 
     const locations = useMemo(() => {
         const unique = [...new Set(users.map((u) => u.location).filter(Boolean))];
@@ -61,7 +64,7 @@ function AdminPage() {
         setError('');
         try {
             await userService.assignRole(userId, role);
-            await loadUsers();
+            await loadUsers(true);
         } catch (err) {
             setError(err.response?.data?.message || 'Could not update role.');
         } finally {
