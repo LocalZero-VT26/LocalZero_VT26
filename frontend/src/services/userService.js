@@ -7,12 +7,12 @@ const userService = {
     },
 
     getManageableUsers: async () => {
-        const response = await api.get('/users/manageable')
+        const response = await api.get('/api/users/manageable')
         return response.data
     },
 
     assignRole: async (userId, role) => {
-        await api.put('/users/assign-role', { userId, role })
+        await api.put('/api/users/assign-role', { userId, role })
     },
 }
 
