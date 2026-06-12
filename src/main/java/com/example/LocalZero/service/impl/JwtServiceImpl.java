@@ -51,7 +51,11 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean isTokenValid(String token) {
-        return extractAllClaims(token).getExpiration().after(new Date());
+        try{
+            return extractAllClaims(token).getExpiration().after(new Date());
+        } catch (Exception e){
+            return false;
+        }
     }
 
     @Override

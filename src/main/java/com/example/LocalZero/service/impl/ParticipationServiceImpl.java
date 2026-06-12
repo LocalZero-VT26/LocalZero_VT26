@@ -13,6 +13,7 @@ import com.example.LocalZero.repository.LikeRepository;
 import com.example.LocalZero.repository.UpdateRepository;
 import com.example.LocalZero.repository.UserRepository;
 import com.example.LocalZero.service.IParticipationService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import com.example.LocalZero.service.notification.event.UpdateCommentedEvent;
 import com.example.LocalZero.service.notification.event.UpdateLikedEvent;
 import org.springframework.context.ApplicationEventPublisher;
