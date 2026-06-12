@@ -1,6 +1,7 @@
 package com.example.LocalZero.service.impl;
 
 import com.example.LocalZero.Model.Comment;
+import com.example.LocalZero.Model.Initiative;
 import com.example.LocalZero.Model.LikeEntity;
 import com.example.LocalZero.Model.Update;
 import com.example.LocalZero.Model.User;
@@ -9,16 +10,18 @@ import com.example.LocalZero.dto.CommentResponse;
 import com.example.LocalZero.dto.LikeResponse;
 import com.example.LocalZero.exception.ResourceNotFoundException;
 import com.example.LocalZero.repository.CommentRepository;
+import com.example.LocalZero.repository.InitiativeRepository;
 import com.example.LocalZero.repository.LikeRepository;
 import com.example.LocalZero.repository.UpdateRepository;
 import com.example.LocalZero.repository.UserRepository;
 import com.example.LocalZero.service.IParticipationService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import com.example.LocalZero.service.notification.event.UpdateCommentedEvent;
 import com.example.LocalZero.service.notification.event.UpdateLikedEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,17 +32,20 @@ public class ParticipationServiceImpl implements IParticipationService {
 
     private final UpdateRepository updateRepository;
     private final UserRepository userRepository;
+    private final InitiativeRepository initiativeRepository;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public ParticipationServiceImpl(UpdateRepository updateRepository,
                                     UserRepository userRepository,
+                                    InitiativeRepository initiativeRepository,
                                     CommentRepository commentRepository,
                                     LikeRepository likeRepository,
                                     ApplicationEventPublisher eventPublisher) {
         this.updateRepository = updateRepository;
         this.userRepository = userRepository;
+        this.initiativeRepository = initiativeRepository;
         this.commentRepository = commentRepository;
         this.likeRepository = likeRepository;
         this.eventPublisher = eventPublisher;
@@ -52,6 +58,8 @@ public class ParticipationServiceImpl implements IParticipationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Update not found with id: " + updateId));
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
+
+        requireInitiativeMember(updateId, user);
 
         Comment comment = new Comment();
         comment.setContent(request.getContent());
@@ -84,6 +92,8 @@ public class ParticipationServiceImpl implements IParticipationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Update not found with id: " + updateId));
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
+
+        requireInitiativeMember(updateId, user);
 
         var existing = likeRepository.findByUpdateIdAndUserId(updateId, user.getId());
         boolean liked;
@@ -122,5 +132,21 @@ public class ParticipationServiceImpl implements IParticipationService {
         long count = likeRepository.countByUpdateId(updateId);
         boolean liked = likeRepository.findByUpdateIdAndUserId(updateId, user.getId()).isPresent();
         return new LikeResponse(count, liked);
+    }
+
+    private void requireInitiativeMember(Long updateId, User user) {
+        Long initiativeId = updateRepository.findInitiativeIdByUpdateId(updateId);
+        if (initiativeId == null) {
+            throw new ResourceNotFoundException("Update not found with id: " + updateId);
+        }
+
+        Initiative initiative = initiativeRepository.findByIdWithParticipants(initiativeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Initiative not found for update: " + updateId));
+
+        boolean isCreator = initiative.getCreator().getEmail().equals(user.getEmail());
+        if (!isCreator && !initiative.getParticipants().contains(user)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "You must join this initiative before interacting with updates.");
+        }
     }
 }

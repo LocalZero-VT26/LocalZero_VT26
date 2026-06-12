@@ -174,7 +174,7 @@ function InitiativeDetailPage() {
                 {updates.length === 0 && <div style={{ color: '#666' }}>No updates yet</div>}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {updates.map((update) => (
-                        <UpdateCard key={update.id} update={update} />
+                        <UpdateCard key={update.id} update={update} canInteract={initiative.joinedByCurrentUser} />
                     ))}
                 </div>
             </div>
