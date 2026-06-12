@@ -5,7 +5,9 @@ import InitiativePage from './pages/InitiativePage';
 import InitiativeDetailPage from './pages/InitiativeDetailPage';
 import ProfilePage from './pages/ProfilePage';
 import InboxPage from './pages/InboxPage';
+import AdminPage from './pages/AdminPage';
 import authService from './services/authService';
+import { canManageRoles } from './utils/roleUtils';
 
 function App() {
     useLocation()
@@ -25,6 +27,10 @@ function App() {
             />
             <Route path="/profile" element={user ? <ProfilePage/> : <Navigate to="/" replace />} />
             <Route path="/inbox" element={user ? <InboxPage/> : <Navigate to="/" replace />} />
+            <Route
+                path="/admin"
+                element={user && canManageRoles(user) ? <AdminPage /> : <Navigate to="/home" replace />}
+            />
         </Routes>
     );
 }

@@ -1,36 +1,16 @@
-import authService from '../services/authService'
 import { useNavigate } from 'react-router-dom'
+import authService from '../services/authService'
 import EcoActionLogger from "../components/EcoActionLogger.jsx";
 import SustainabilityDashboard from "../components/SustainabilityDashboard.jsx";
-import NotificationBell from "../components/NotificationBell.jsx";
+import AppNav from '../components/AppNav';
 
 function HomePage() {
     const user = authService.getCurrentUser();
     const navigate = useNavigate();
 
-    const handleLogout = async () => {
-        try {
-            await authService.logout();
-        } catch (error) {
-            console.log('Logout failed:', error);
-            localStorage.removeItem('user');
-        } finally {
-            navigate('/');
-        }
-    }
-
     return (
         <div style={{ fontFamily: 'system-ui, sans-serif', backgroundColor: '#f9fafb', minHeight: '100vh' }}>
-
-            <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 24px', borderBottom: '1px solid #ddd', backgroundColor: 'white' }}>
-                <span>Welcome, <strong>{user?.name}</strong></span>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                    <NotificationBell />
-                    <button onClick={() => navigate('/inbox')} style={{cursor: 'pointer', padding: '6px 16px' }}>Inbox</button>
-                    <button onClick={handleLogout} style={{ cursor: 'pointer', padding: '6px 16px' }}>Logout</button>
-                    <button onClick={() => navigate('/profile')} style={{cursor: 'pointer', padding: '6px 16px' }}>Profile</button>
-                </div>
-            </nav>
+            <AppNav />
 
             <div style={{ padding: '40px', textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
                 <h1>LocalZero Dashboard</h1>
@@ -57,7 +37,6 @@ function HomePage() {
                         Browse & Join Initiatives
                     </button>
                 </div>
-
 
                 <hr style={{ border: '0', borderTop: '1px solid #eee', margin: '40px 0' }} />
 

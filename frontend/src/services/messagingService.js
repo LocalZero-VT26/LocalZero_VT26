@@ -2,17 +2,17 @@ import api from './api';
 
 const messagingService = {
     getRooms: async () => {
-        const response = await api.get('/api/messaging/rooms');
+        const response = await api.get('/messaging/rooms');
         return response.data;
     },
 
     getRoomMessages: async (roomId) => {
-        const response = await api.get(`/api/messaging/rooms/${roomId}`);
+        const response = await api.get(`/messaging/rooms/${roomId}`);
         return response.data;
     },
 
     sendMessage: async (recipientEmail, content) => {
-        const response = await api.post('/api/messaging/send', {
+        const response = await api.post('/messaging/send', {
             recipientEmail,
             content
         });
@@ -20,7 +20,7 @@ const messagingService = {
     },
 
     getAvailableUsers: async () => {
-        const response = await api.get('/api/users/available');
+        const response = await api.get('/users/available');
         return response.data;
     }
 };
