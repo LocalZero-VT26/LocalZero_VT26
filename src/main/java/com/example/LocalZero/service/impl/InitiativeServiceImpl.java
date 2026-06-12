@@ -97,6 +97,10 @@ public class InitiativeServiceImpl implements IInitiativeService {
         User creator = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
 
+        if (!creator.getRoles().contains(Role.ORGANIZER) && !creator.getRoles().contains(Role.ADMIN)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only users with ORGANIZER or ADMIN role can create initiatives.");
+        }
+
         Initiative initiative = new Initiative(
                 request.getTitle(),
                 request.getDescription(),

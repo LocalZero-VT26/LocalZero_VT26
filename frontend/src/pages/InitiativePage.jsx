@@ -100,12 +100,16 @@ function InitiativePage() {
                         <p style={{ color: '#6b7280', margin: '6px 0 0 0', fontSize: '15px' }}>Find crowdsourced community work happening near you.</p>
                     </div>
 
-                    <button
-                        onClick={() => setShowCreateModal(true)}
-                        style={{ padding: '12px 22px', backgroundColor: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '15px' }}
-                    >
-                        Launch Initiative
-                    </button>
+                    {(user?.roles?.includes('ORGANIZER') || user?.roles?.includes('ADMIN')) && (
+                        <button
+                            onClick={() => setShowCreateModal(true)}
+                            style={{ padding: '12px 22px', backgroundColor: '#2563eb', color:
+                                    '#ffffff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '15px'
+                            }}
+                        >
+                            Launch Initiative
+                        </button>
+                    )}
                 </div>
 
                 {error && (
