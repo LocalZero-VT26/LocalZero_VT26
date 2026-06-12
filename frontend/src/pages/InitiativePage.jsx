@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import authService from '../services/authService';
 import InitiativeService from '../services/InitiativeService';
 import InitiativeForm from '../components/InitiativeForm';
-import NotificationBell from '../components/NotificationBell.jsx';
+import AppNav from '../components/AppNav';
 
 function InitiativePage() {
     const navigate = useNavigate();
@@ -91,25 +91,7 @@ function InitiativePage() {
 
     return (
         <div style={{ fontFamily: 'system-ui, sans-serif', minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-            <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 28px', borderBottom: '1px solid #e5e7eb', backgroundColor: '#ffffff' }}>
-                <button
-                    onClick={() => navigate('/home')}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '15px', color: '#4b5563', fontWeight: '500' }}
-                >
-                    Back to Dashboard
-                </button>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ color: '#374151', fontSize: '14px' }}>
-                        Acting as: <strong>{user?.name || 'Local Member'}</strong>
-                        {user?.roles && (
-                            <span style={{ color: '#6b7280', marginLeft: '4px' }}>
-                                ({user.roles.map(r => r.replace('ROLE_', '')).join(', ')})
-                            </span>
-                        )}
-                    </span>
-                    <NotificationBell />
-                </div>
-            </nav>
+            <AppNav title="Active Initiatives" />
 
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>

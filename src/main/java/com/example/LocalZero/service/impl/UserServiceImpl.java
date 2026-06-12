@@ -4,6 +4,7 @@ import com.example.LocalZero.Model.Role;
 import com.example.LocalZero.Model.User;
 import com.example.LocalZero.dto.UserSummaryResponse;
 import com.example.LocalZero.exception.ResourceNotFoundException;
+import com.example.LocalZero.exception.ValidationException;
 import com.example.LocalZero.repository.UserRepository;
 import com.example.LocalZero.service.IUserService;
 import com.example.LocalZero.service.OnlineUserRegistery;
@@ -29,11 +30,14 @@ public class UserServiceImpl implements IUserService {
         User currentUser = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        boolean isAdmin = currentUser.getRoles().contains(Role.ADMIN);
         boolean isOrganizer = currentUser.getRoles().contains(Role.ORGANIZER);
 
         List<User> users;
 
-        if (isOrganizer) {
+        if (isAdmin) {
+            users = userRepository.findAll();
+        } else if (isOrganizer) {
             List<User> userInLocation = userRepository.findByLocation(currentUser.getLocation());
             List<User> allOrganizers = userRepository.findByRole(Role.ORGANIZER);
 
@@ -62,6 +66,41 @@ public class UserServiceImpl implements IUserService {
             }
         }
 
+        return result;
+    }
+
+    @Override
+    public List<UserSummaryResponse> getManageableUsers(String userEmail) {
+        User currentUser = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        boolean isAdmin = currentUser.getRoles().contains(Role.ADMIN);
+        boolean isOrganizer = currentUser.getRoles().contains(Role.ORGANIZER);
+
+        if (!isAdmin && !isOrganizer) {
+            throw new ValidationException("Only admins and organizers can manage roles!");
+        }
+
+        List<User> users;
+        if (isAdmin) {
+            users = userRepository.findAll();
+        } else {
+            users = userRepository.findByLocation(currentUser.getLocation());
+        }
+
+        List<UserSummaryResponse> result = new ArrayList<>();
+        for (User user : users) {
+            if (!currentUser.getEmail().equals(user.getEmail())) {
+                result.add(new UserSummaryResponse(
+                        user.getId(),
+                        user.getName(),
+                        user.getLocation(),
+                        user.getRoles(),
+                        user.getEmail(),
+                        onlineUserRegistery.isOnline(user.getEmail())
+                ));
+            }
+        }
         return result;
     }
 

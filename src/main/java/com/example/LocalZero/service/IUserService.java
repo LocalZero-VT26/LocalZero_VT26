@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface IUserService {
     List<UserSummaryResponse> getAvailableUsers(String userEmail);
+    List<UserSummaryResponse> getManageableUsers(String userEmail);
     void assignRole(AssignRoleRequest request, String callerEmail);
 }

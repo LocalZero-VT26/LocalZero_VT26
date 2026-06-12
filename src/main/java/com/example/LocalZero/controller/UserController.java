@@ -21,6 +21,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getAvailableUsers(email));
     }
 
+    @GetMapping("/manageable")
+    public ResponseEntity<List<UserSummaryResponse>> getManageableUsers(@RequestAttribute("email") String email) {
+        return ResponseEntity.ok(userService.getManageableUsers(email));
+    }
+
     @PutMapping("/assign-role")
     public ResponseEntity<Void> assignrole(@jakarta.validation.Valid @RequestBody AssignRoleRequest request,
                                            @RequestAttribute("email") String callerEmail){
