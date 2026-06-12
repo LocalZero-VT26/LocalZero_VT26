@@ -4,7 +4,6 @@ import com.example.LocalZero.dto.CommentCreateRequest;
 import com.example.LocalZero.dto.CommentResponse;
 import com.example.LocalZero.dto.LikeResponse;
 import com.example.LocalZero.service.IParticipationService;
-import com.example.LocalZero.service.IParticipationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
