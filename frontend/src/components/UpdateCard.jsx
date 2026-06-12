@@ -2,34 +2,37 @@ import { useEffect, useState } from 'react';
 import InitiativeService from '../services/InitiativeService';
 import authService from '../services/authService';
 
-function UpdateCard({ update }) {
+function UpdateCard({ update, canInteract = false }) {
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [likeInfo, setLikeInfo] = useState({ count: 0, likedByCurrentUser: false });
     const currentUser = authService.getCurrentUser();
 
     useEffect(() => {
-        fetchComments();
-        fetchLikeInfo();
-    }, [update]);
+        let isMounted = true;
 
-    const fetchComments = async () => {
-        try {
-            const data = await InitiativeService.getComments(update.id);
-            setComments(data);
-        } catch (err) {
-            console.error('Failed to get comments', err);
-        }
-    };
+        const loadData = async () => {
+            try {
+                const commentsData = await InitiativeService.getComments(update.id);
+                if (isMounted) setComments(commentsData);
+            } catch (err) {
+                console.error('Failed to get comments', err);
+            }
 
-    const fetchLikeInfo = async () => {
-        try {
-            const data = await InitiativeService.getLikeInfo(update.id);
-            setLikeInfo(data);
-        } catch (err) {
-            console.error('Failed to get like info', err);
-        }
-    };
+            try {
+                const likeData = await InitiativeService.getLikeInfo(update.id);
+                if (isMounted) setLikeInfo(likeData);
+            } catch (err) {
+                console.error('Failed to get like info', err);
+            }
+        };
+
+        loadData();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [update.id]);
 
     const handleAddComment = async (e) => {
         e.preventDefault();
@@ -60,9 +63,13 @@ function UpdateCard({ update }) {
             <div style={{ marginBottom: '8px' }}>{update.content}</div>
             {update.imageUrl && <img src={update.imageUrl} alt="" style={{ maxWidth: '100%', marginBottom: '8px' }} />}
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
-                <button onClick={handleToggleLike} style={{ cursor: 'pointer' }}>
-                    {likeInfo.likedByCurrentUser ? 'Unlike' : 'Like'} ({likeInfo.count})
-                </button>
+                {canInteract ? (
+                    <button onClick={handleToggleLike} style={{ cursor: 'pointer' }}>
+                        {likeInfo.likedByCurrentUser ? 'Unlike' : 'Like'} ({likeInfo.count})
+                    </button>
+                ) : (
+                    <span style={{ color: '#666', fontSize: '14px' }}>{likeInfo.count} likes</span>
+                )}
             </div>
 
             <div>
@@ -75,11 +82,16 @@ function UpdateCard({ update }) {
                     </div>
                 ))}
 
-                {currentUser && (
+                {canInteract && currentUser && (
                     <form onSubmit={handleAddComment} style={{ marginTop: '8px' }}>
                         <textarea value={newComment} onChange={e => setNewComment(e.target.value)} rows={3} style={{ width: '100%', padding: '8px' }} />
                         <button type="submit" style={{ marginTop: '6px', cursor: 'pointer' }}>Post comment</button>
                     </form>
+                )}
+                {!canInteract && currentUser && (
+                    <p style={{ marginTop: '8px', color: '#666', fontSize: '14px' }}>
+                        Join this initiative to like and comment.
+                    </p>
                 )}
             </div>
         </div>
