@@ -46,8 +46,28 @@ function AdminPage() {
             navigate('/home');
             return;
         }
-        loadUsers();
-    }, [navigate, loadUsers]);
+
+        let cancelled = false;
+
+        userService.getManageableUsers()
+            .then((data) => {
+                if (!cancelled) {
+                    setUsers(data);
+                    setError('');
+                    setLoading(false);
+                }
+            })
+            .catch((err) => {
+                if (!cancelled) {
+                    setError(err.response?.data?.message || 'Could not load users.');
+                    setLoading(false);
+                }
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [navigate]);
 
     const locations = useMemo(() => {
         const unique = [...new Set(users.map((u) => u.location).filter(Boolean))];
