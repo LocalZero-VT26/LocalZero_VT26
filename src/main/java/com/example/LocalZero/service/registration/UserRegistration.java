@@ -5,7 +5,6 @@ import com.example.LocalZero.Model.User;
 import com.example.LocalZero.dto.RegisterRequest;
 import com.example.LocalZero.exception.DuplicateResourceException;
 import com.example.LocalZero.repository.UserRepository;
-import com.example.LocalZero.service.INotification;
 import com.example.LocalZero.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,7 +21,6 @@ public class UserRegistration extends UserRegistrationTemplate {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final INotification accountCreatedNotification;
 
     @Override
     protected void validateInput(RegisterRequest request) {
@@ -55,10 +53,5 @@ public class UserRegistration extends UserRegistrationTemplate {
     @Override
     protected String generateToken(User user) {
         return jwtService.generateToken(user.getEmail(), user.getRoles());
-    }
-
-    @Override
-    protected void sendNotification(User user) {
-        accountCreatedNotification.notify(user.getEmail(), user.getName());
     }
 }

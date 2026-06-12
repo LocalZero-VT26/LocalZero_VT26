@@ -15,6 +15,9 @@ public interface UpdateRepository extends JpaRepository<Update, Long> {
 
     List<Update> findByInitiativeIdOrderByCreatedAtDesc(Long initiativeId);
 
+    @Query("SELECT u.initiative.id FROM Update u WHERE u.id = :updateId")
+    Long findInitiativeIdByUpdateId(@Param("updateId") Long updateId);
+
     @Query("""
             SELECT DISTINCT u FROM Update u
             JOIN FETCH u.author

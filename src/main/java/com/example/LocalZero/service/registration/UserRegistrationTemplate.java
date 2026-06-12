@@ -15,7 +15,6 @@ public abstract class UserRegistrationTemplate {
         hashAndSetPassword(user, request.getPassword());
         assignRole(user);
         User savedUser = saveUser(user);
-        sendNotification(savedUser);
         String token = generateToken(savedUser);
         return new AuthResponse(savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
                 savedUser.getLocation(), savedUser.getRoles(), token);
@@ -26,5 +25,4 @@ public abstract class UserRegistrationTemplate {
     protected abstract void assignRole(User user);
     protected abstract User saveUser(User user);
     protected abstract String generateToken(User user);
-    protected abstract void sendNotification(User user);
 }

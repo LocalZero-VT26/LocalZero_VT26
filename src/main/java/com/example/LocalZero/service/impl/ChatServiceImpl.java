@@ -11,10 +11,9 @@ import com.example.LocalZero.repository.ChatMessageRepository;
 import com.example.LocalZero.repository.ChatRoomRepository;
 import com.example.LocalZero.repository.UserRepository;
 import com.example.LocalZero.service.IChatService;
-import com.example.LocalZero.service.INotification;
 import com.example.LocalZero.service.OnlineUserRegistery;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,19 +27,19 @@ public class ChatServiceImpl implements IChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
-    private final INotification chatMessageNotification;
     private final OnlineUserRegistery onlineUserRegistery;
+    private final ApplicationEventPublisher eventPublisher;
 
     public ChatServiceImpl(ChatRoomRepository chatRoomRepository,
                            ChatMessageRepository chatMessageRepository,
                            UserRepository userRepository,
-                           @Qualifier("chatMessageNotification") INotification chatMessageNotification,
-                           OnlineUserRegistery onlineUserRegistery) {
+                           OnlineUserRegistery onlineUserRegistery,
+                           ApplicationEventPublisher eventPublisher) {
         this.chatRoomRepository = chatRoomRepository;
         this.chatMessageRepository = chatMessageRepository;
         this.userRepository = userRepository;
-        this.chatMessageNotification = chatMessageNotification;
         this.onlineUserRegistery = onlineUserRegistery;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -48,8 +47,8 @@ public class ChatServiceImpl implements IChatService {
     public ChatMessageResponse sendMessage(String senderEmail, SendMessageRequest request) {
         com.example.LocalZero.service.messaging.command.ChatCommand command = 
                 new com.example.LocalZero.service.messaging.command.SendMessageCommand(
-                senderEmail, request, chatRoomRepository, chatMessageRepository, userRepository, 
-                chatMessageNotification, onlineUserRegistery);
+                senderEmail, request, chatRoomRepository, chatMessageRepository, userRepository,
+                eventPublisher);
                 
         return command.execute();
     }

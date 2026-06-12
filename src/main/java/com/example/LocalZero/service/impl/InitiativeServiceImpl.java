@@ -7,7 +7,10 @@ import com.example.LocalZero.dto.*;
 import com.example.LocalZero.exception.ResourceNotFoundException;
 import com.example.LocalZero.service.joinInitiative.Join;
 import com.example.LocalZero.service.joinInitiative.Leave;
+import com.example.LocalZero.service.notification.event.InitiativeCreatedEvent;
+import com.example.LocalZero.service.notification.event.UpdatePostedEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -39,6 +42,7 @@ public class InitiativeServiceImpl implements IInitiativeService {
     private final UpdateRepository updateRepository;
     private final Join joinService;
     private final Leave leaveService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional(readOnly = true)
@@ -107,7 +111,14 @@ public class InitiativeServiceImpl implements IInitiativeService {
         // so they can post updates and show up in the participant count.
         initiative.getParticipants().add(creator);
 
-        return mapToInitiativeResponse(initiativeRepository.save(initiative), 1, true);
+        Initiative saved = initiativeRepository.save(initiative);
+
+        // Observer pattern: announce the new initiative so listeners can
+        // notify users in the same neighborhood without coupling this service to them.
+        eventPublisher.publishEvent(new InitiativeCreatedEvent(
+                saved.getId(), saved.getTitle(), saved.getLocation(), creator.getEmail()));
+
+        return mapToInitiativeResponse(saved, 1, true);
     }
 
     @Override
@@ -143,6 +154,10 @@ public class InitiativeServiceImpl implements IInitiativeService {
         update.setAuthor(user);
 
         Update savedUpdate = updateRepository.save(update);
+
+        eventPublisher.publishEvent(new UpdatePostedEvent(
+                initiative.getId(), user.getEmail(), user.getName()));
+
         return new UpdateResponse(savedUpdate.getId(), savedUpdate.getContent(),
                 savedUpdate.getImageUrl(), user.getName(), savedUpdate.getCreatedAt());
     }
