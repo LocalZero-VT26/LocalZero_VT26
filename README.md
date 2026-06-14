@@ -55,9 +55,3 @@ npm run dev
 
 - Backend: http://localhost:8080  
 - Frontend: http://localhost:5173
-
-
-- Email: `admin@localzero.se`
-- Password: `localzero-admin`
-
-You can change these in the `application.properties` file.
