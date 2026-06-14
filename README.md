@@ -56,9 +56,6 @@ npm run dev
 - Backend: http://localhost:8080  
 - Frontend: http://localhost:5173
 
-## Default admin
-
-An admin account is created on startup if it does not already exist:
 
 - Email: `admin@localzero.se`
 - Password: `localzero-admin`
