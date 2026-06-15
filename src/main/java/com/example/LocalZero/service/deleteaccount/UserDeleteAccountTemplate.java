@@ -3,6 +3,10 @@ package com.example.LocalZero.service.deleteaccount;
 import com.example.LocalZero.Model.User;
 import com.example.LocalZero.dto.DeleteAccountRequest;
 
+/**
+ * Template method-pattern for deleting account.
+ */
+
 public abstract class UserDeleteAccountTemplate {
 
     public final void deleteAccount(String token, DeleteAccountRequest request) {

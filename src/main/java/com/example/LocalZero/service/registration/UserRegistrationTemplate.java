@@ -4,6 +4,10 @@ import com.example.LocalZero.Model.User;
 import com.example.LocalZero.dto.AuthResponse;
 import com.example.LocalZero.dto.RegisterRequest;
 
+/**
+ * Template method-pattern for authentication for user registration.
+ */
+
 public abstract class UserRegistrationTemplate {
 
     public final AuthResponse register(RegisterRequest request) {

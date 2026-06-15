@@ -7,6 +7,12 @@ import com.example.LocalZero.exception.ValidationException;
 
 public class RoleTransitionValidator extends RoleAssignmentValidator {
 
+
+    /**
+     * The third and last filter in the CoR for validation.
+     * Makes sure that only admins can assign admin roles.
+     */
+
     @Override
     protected void doValidate(User caller, User target, AssignRoleRequest request) {
         boolean isAdmin = caller.getRoles().contains(Role.ADMIN);

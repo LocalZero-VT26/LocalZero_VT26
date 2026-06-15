@@ -38,6 +38,10 @@ public class SendMessageCommand extends MessageProcessorTemplate implements Chat
         this.eventPublisher = eventPublisher;
     }
 
+    /**
+     * From the Command pattern that is implementing ChatCommand for messaging.
+     */
+
     @Override
     public ChatMessageResponse execute() {
         return process(senderEmail, request);

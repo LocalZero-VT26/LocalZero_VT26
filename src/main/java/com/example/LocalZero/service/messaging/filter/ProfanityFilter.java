@@ -9,7 +9,7 @@ import java.util.List;
 
 @Component
 public class ProfanityFilter extends MessageFilter {
-    private final List<String> badWords = Arrays.asList("badword1", "badword2"); // Example words
+    private final List<String> badWords = Arrays.asList("badword1", "badword2");
 
     @Override
     protected void doFilter(String senderEmail, SendMessageRequest request) {

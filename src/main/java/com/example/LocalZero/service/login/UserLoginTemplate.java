@@ -4,6 +4,10 @@ import com.example.LocalZero.Model.User;
 import com.example.LocalZero.dto.AuthResponse;
 import com.example.LocalZero.dto.LoginRequest;
 
+/**
+ * Template method-pattern for authentication logging in.
+ */
+
 public abstract class UserLoginTemplate {
 
     public final AuthResponse login(LoginRequest request) {

@@ -6,6 +6,11 @@ import com.example.LocalZero.exception.ResourceNotFoundException;
 
 import java.util.List;
 
+/**
+ * This is an abstract class for generating sustainability dashboards.
+ * It provides a template method generateDashboard.
+ */
+
 public abstract class AbstractDashboardGenerator<T> {
     
     protected final UserRepository userRepository;

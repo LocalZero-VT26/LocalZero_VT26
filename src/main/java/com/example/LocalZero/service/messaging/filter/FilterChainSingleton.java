@@ -1,5 +1,8 @@
 package com.example.LocalZero.service.messaging.filter;
 
+/**
+ * The CoR for messaging is linked here in the constructor, and we make sure that there is only one instance of the filter chain.
+ */
 
 public class FilterChainSingleton {
     private static FilterChainSingleton instance;
@@ -13,6 +16,10 @@ public class FilterChainSingleton {
         this.rootFilter = emptyFilter;
     }
 
+    /**
+     * We make sure that FilterChainSingleton only has one instance, and that it is thread-safe.
+     * Singleton design pattern.
+     */
     public static synchronized FilterChainSingleton getInstance() {
         if (instance == null) {
             instance = new FilterChainSingleton();

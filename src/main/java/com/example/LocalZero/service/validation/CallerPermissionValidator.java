@@ -7,6 +7,11 @@ import com.example.LocalZero.exception.ValidationException;
 
 public class CallerPermissionValidator extends RoleAssignmentValidator{
 
+
+    /**
+     * The first filter in the CoR for validation.
+     * Validates that if the user is not an admin or organizer, they cannot change roles of other users.
+     */
     @Override
     protected void doValidate(User caller, User target, AssignRoleRequest request) {
         boolean isOrganizer = caller.getRoles().contains(Role.ORGANIZER);

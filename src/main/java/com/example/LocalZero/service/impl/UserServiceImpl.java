@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 @Service
 public class UserServiceImpl implements IUserService {
 
@@ -104,6 +106,12 @@ public class UserServiceImpl implements IUserService {
         return result;
     }
 
+    /**
+     * This is where the validation for role assignment instantiates.
+     * The chain of responsibility pattern is used here to separate
+     * the different validation concerns when assigning roles.
+     */
+
     @Override
     @org.springframework.transaction.annotation.Transactional
     public void assignRole(com.example.LocalZero.dto.AssignRoleRequest request, String callerEmail) {
@@ -113,7 +121,7 @@ public class UserServiceImpl implements IUserService {
         User target = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Target user not found"));
 
-        //CoR
+
         com.example.LocalZero.service.validation.RoleAssignmentValidator
                 callerCheck = new com.example.LocalZero.service.validation.CallerPermissionValidator();
         com.example.LocalZero.service.validation.RoleAssignmentValidator

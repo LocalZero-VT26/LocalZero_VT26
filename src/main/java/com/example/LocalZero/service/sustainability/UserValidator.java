@@ -5,6 +5,10 @@ import com.example.LocalZero.exception.ResourceNotFoundException;
 
 public class UserValidator extends EcoValidator {
 
+    /**
+     * The first filter in the CoR-pattern for EcoValidation, which checks that there
+     * is a valid user for the eco-action.
+     */
 
     @Override
     public void validate(String description, User user) {

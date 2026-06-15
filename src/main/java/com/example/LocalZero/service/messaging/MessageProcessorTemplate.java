@@ -4,6 +4,10 @@ import com.example.LocalZero.dto.ChatMessageResponse;
 import com.example.LocalZero.dto.SendMessageRequest;
 import com.example.LocalZero.service.messaging.filter.FilterChainSingleton;
 
+/**
+ * Template method-pattern for authentication for message processing.
+ */
+
 public abstract class MessageProcessorTemplate {
     
     public final ChatMessageResponse process(String senderEmail, SendMessageRequest request) {

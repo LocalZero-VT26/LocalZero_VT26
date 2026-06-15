@@ -17,6 +17,10 @@ public class LogEcoActionCommand implements IEcoCommand {
         this.repository = repository;
     }
 
+    /**
+     * Part of the command pattern, this method creates a new EcoAction with the provided description and user and saving
+     * them in the database.
+     */
 
     @Override
     public void execute() {
