@@ -5,6 +5,11 @@ import com.example.LocalZero.exception.ValidationException;
 
 public class ContentValidator extends EcoValidator{
 
+    /**
+     * This is the second and final validator for the EcoValidation.
+     * This makes sure that the description of the eco-action is not empty or null.
+     */
+
     @Override
     public void validate(String description, User user) {
         if(description == null || description.trim().isEmpty()) {

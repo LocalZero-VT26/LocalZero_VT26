@@ -12,6 +12,7 @@ import com.example.LocalZero.repository.ChatRoomRepository;
 import com.example.LocalZero.repository.UserRepository;
 import com.example.LocalZero.service.IChatService;
 import com.example.LocalZero.service.OnlineUserRegistery;
+import com.example.LocalZero.service.messaging.command.ChatCommand;
 import jakarta.transaction.Transactional;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,10 @@ public class ChatServiceImpl implements IChatService {
         this.onlineUserRegistery = onlineUserRegistery;
         this.eventPublisher = eventPublisher;
     }
+
+    /**
+     * The part where the command pattern for messaging is used, to send the message.
+     */
 
     @Override
     @Transactional

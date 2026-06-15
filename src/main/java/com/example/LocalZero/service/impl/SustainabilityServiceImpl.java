@@ -28,6 +28,12 @@ public class SustainabilityServiceImpl implements ISustainabilityService {
     private final EcoActionRepository ecoActionRepository;
     private final InitiativeRepository initiativeRepository;
 
+    /**
+     * This is where the UserValidator CoR-chain is initiated, which will validate
+     * the user and the content of the eco action description before executing
+     * the LogEcoActionCommand.
+     * Line 51 is where we set off the command pattern!
+     */
 
     @Override
     @Transactional
@@ -45,6 +51,10 @@ public class SustainabilityServiceImpl implements ISustainabilityService {
         IEcoCommand logCommand = new LogEcoActionCommand(description, user, ecoActionRepository);
         logCommand.execute();
     }
+
+    /**
+     * This is where we check if the user has 9 or less EcoActions to generate mock eco-actions if needed.
+     */
 
     @Override
     @Transactional

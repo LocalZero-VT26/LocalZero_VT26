@@ -2,6 +2,10 @@ package com.example.LocalZero.service.logout;
 
 import java.util.Date;
 
+/**
+ * Template method-pattern for logging out.
+ */
+
 public abstract class UserLogoutTemplate {
 
     public final void logout(String token) {

@@ -6,6 +6,11 @@ import com.example.LocalZero.repository.EcoActionRepository;
 
 import java.util.List;
 
+/**
+ * This command makes sure that users with 9 or less EcoActions get 10 mock eco-actions
+ * generated for them.
+ */
+
 public class GenerateMockEcoActionsCommand implements IEcoCommand {
 
     private final User user;

@@ -3,6 +3,12 @@ package com.example.LocalZero.service.validation;
 import com.example.LocalZero.Model.User;
 import com.example.LocalZero.dto.AssignRoleRequest;
 
+/**
+ * This is the abstract class that the chains in the CoR are implementing, which gives them doValidate method.
+ *
+ */
+
+
 public abstract class RoleAssignmentValidator {
 
     protected RoleAssignmentValidator next;
